@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import LoginPage from '../pages/Login';
 import SignupPage from '../pages/SignUp';
+import ForgotPassword from '../pages/ForgotPass';
 import Navbar from '../components/Navbar';
 
 const AppRouter = () => {
@@ -12,6 +13,7 @@ const AppRouter = () => {
             <Routes>
                 <Route path="/Login" element={<LoginPage onLogin={() => setIsLoggedIn(true)}/>} />
                 <Route path="/SignUp" element={<SignupPage/>} />
+                <Route path="/ForgotPass" element={<ForgotPassword />} />
             </Routes>
         </Router>
     );

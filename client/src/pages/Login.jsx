@@ -33,17 +33,13 @@ const LoginPage = ({onLogin}) => {
         if (isValid) {
             // Xử lý đăng nhập
             console.log('Đăng nhập với:', email, password);
-            const accessToken = null;
-            const headers = {
-                'Content-Type': 'application/json',
-            };
-            
-            if (accessToken) {
-                headers['Authorization'] = `Bearer ${accessToken}`;
-            }
+
             fetch('http://localhost:8000/api/login', {
                 method: 'POST',
-                headers: headers,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
                 body: JSON.stringify({ email, password }),
             })
                 .then((response) => response.json())
@@ -111,7 +107,7 @@ const LoginPage = ({onLogin}) => {
                     </div>
 
                     <div className="forgot-password">
-                        <Link to="/forgot-password">Quên mật khẩu?</Link>
+                        <Link to="/ForgotPass">Quên mật khẩu?</Link>
                     </div>
 
                     <button type="submit" className="login-button">Đăng Nhập</button>
