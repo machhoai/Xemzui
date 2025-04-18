@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "motion/react";
 import { cn } from "../untils/tailwind-merge";
 
-export default function LampDemo() {
+export default function WelcomeLoad() {
   return (
     <motion.div
       initial={{ opacity: 1}}
@@ -11,7 +11,7 @@ export default function LampDemo() {
         delay: 2,
         duration: 1,
         ease: "easeInOut",
-      }}
+      }} className="z-1000000 overflow-hidden"
       >
       <LampContainer>
         <motion.h1
