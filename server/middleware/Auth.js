@@ -61,4 +61,26 @@ function authenticate(req, res, next) {
     });
 }
 
-module.exports = { createAccessToken, createRefreshToken, refreshAccessToken, authenticate }
+function authenticateAdmin(req, res, next) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    console.log("authenticate - token: ", token);
+    if (!token) {
+        req.user = null;
+        console.log("No token provided, user is not authenticated.");
+        return next();
+    }
+
+    jwt.verify(token, process.env.SECRET_ACCESS, (err, user) => {
+        if (err) {
+            return res.status(403);
+        } 
+        req.user = user;
+        if (!user.isAdmin) {
+            return res.status(403).json({ message: "Access denied" });
+        }
+        next();
+    });
+}
+
+module.exports = { createAccessToken, createRefreshToken, refreshAccessToken, authenticate, authenticateAdmin }

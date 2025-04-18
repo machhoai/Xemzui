@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv');
 const { runConnect, closeConnection } = require('./config/ConnectDB');
-const { authenticate, refreshAccessToken } = require('./middleware/Auth.js');
+const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middleware/Auth.js');
 const { HandlerLogin } = require('./Controllers/HandlerAccount.js');
 // const { errorHandler } = require('./middleware/errorMiddleware');
 
