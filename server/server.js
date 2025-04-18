@@ -1,13 +1,10 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv');
-const { connectDB } = require('./config/db');
-const userRouter = require('./Routes/UserRoute');
-const moviesRouter = require('./Routes/MoviesRoute');
-const categoriesRouter = require('./Routes/CategoriesRoute');
-const uploadRoute = require("./Routes/UploadRoute");
-const topicRoute = require("./Routes/TopicRoute");
-const { errorHandler } = require('./middleware/errorMiddleware');
+const { runConnect, closeConnection } = require('./config/ConnectDB');
+const { authenticate, refreshAccessToken } = require('./middleware/Auth.js');
+const { HandlerLogin } = require('./Controllers/HandlerAccount.js');
+// const { errorHandler } = require('./middleware/errorMiddleware');
 
 dotenv.config();
 
@@ -16,20 +13,28 @@ app.use(cors())
 app.use(express.json())
 
 // Ket noi database
-connectDB();
+runConnect();
+// Dong ket noi database khi server ngung hoat dong
+closeConnection();
 
-// home 
-app.get('/', (req, res) => res.send('Hello World!'))
+//** API Refresh Token ***/
+app.post('/refresh-token', (req, res) => { refreshAccessToken(req.body.refreshToken, res) });
 
-// router khác
-app.use("/api/users", userRouter);
-app.use("/api/movies", moviesRouter);
-app.use("/api/categories", categoriesRouter);
-app.use("/api/upload", uploadRoute);
-app.use("/api/topics", topicRoute);
+//------------- API User-------------------
+
+//** API Account ***/
+//API Login
+app.post('/api/login', authenticate, (req, res) => HandlerLogin(req, res))
+
+//** API Handler Data Movies ***/
+
+
+
+//------------- API Admin -----------------
+
 
 // xử lí lỗi middleware ---> luôn đặt ở cuối trước các router để throw lỗi json
-app.use(errorHandler)
+// app.use(errorHandler)
 
 const PORT = process.env.PORT || 8000;
 
