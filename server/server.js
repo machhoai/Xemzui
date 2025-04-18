@@ -1,15 +1,20 @@
 const express = require('express')
 const cors = require('cors')
+const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const { runConnect, closeConnection } = require('./config/ConnectDB');
-const { authenticate, refreshAccessToken } = require('./middleware/Auth.js');
-const { HandlerLogin } = require('./Controllers/HandlerAccount.js');
+const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middleware/Auth.js');
+const { HandlerLogin, HandlerSignUp } = require('./Controllers/HandlerAccount.js');
 // const { errorHandler } = require('./middleware/errorMiddleware');
 
 dotenv.config();
 
 const app = express()
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:5173', // Chỉ định chính xác client
+    credentials: true,               // Cho phép gửi cookie/authorization header
+}));
+app.use(cookieParser());
 app.use(express.json())
 
 // Ket noi database
@@ -18,13 +23,16 @@ runConnect();
 closeConnection();
 
 //** API Refresh Token ***/
-app.post('/refresh-token', (req, res) => { refreshAccessToken(req.body.refreshToken, res) });
+app.post('/refresh-token', (req, res) => { refreshAccessToken(req, res) });
 
 //------------- API User-------------------
 
 //** API Account ***/
 //API Login
 app.post('/api/login', authenticate, (req, res) => HandlerLogin(req, res))
+
+//API SignUp
+app.post('/api/signup', (req, res) => HandlerSignUp(req, res))
 
 //** API Handler Data Movies ***/
 
