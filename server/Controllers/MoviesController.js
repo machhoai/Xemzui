@@ -1,5 +1,6 @@
 const { MoviesCollection } = require("../config/ConnectDB");
 const asyncHandler = require("express-async-handler");
+const {ObjectId } = require("mongodb");
 
 // ******** PUBLIC CONTROLLER ********
 
@@ -15,6 +16,27 @@ const importMovies = asyncHandler(async (req, res) => {
 
 // get all movie
 // GET /api/movies
+
+
+// get movie với id
+// GET /api/movies/:id
+const getMovieById = asyncHandler(async (req, res, movieId) => {
+    try {
+        // Convert string ID to ObjectId
+        const movie = await MoviesCollection.findOne({ id: movieId});
+
+        if (!movie) {
+          return res.status(404).json({ error: "Movie not found" });
+        }
+    
+        res.json(movie);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+});
+
+
 const getMovies = asyncHandler(async (req, res) => {
   try {
     const {
@@ -62,22 +84,6 @@ const getMovies = asyncHandler(async (req, res) => {
       pages: Math.ceil(count / limit),
       totalMovies: count,
     });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// get movie với id
-// GET /api/movies/:id
-const getMovieById = asyncHandler(async (req, res) => {
-  try {
-    const movie = await Movie.findById(req.params.id);
-    if (movie) {
-      res.json(movie);
-    } else {
-      res.status(404);
-      throw new Error("Movie not found");
-    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

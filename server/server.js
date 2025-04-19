@@ -1,4 +1,12 @@
-const express = require("express");
+const express = require('express')
+const cors = require('cors')
+const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv');
+const { runConnect, closeConnection } = require('./config/ConnectDB');
+const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middleware/Auth.js');
+const { HandlerLogin, HandlerSignUp } = require('./Controllers/HandlerAccount.js');
+const { getMovieById } = require('./Controllers/MoviesController.js');
+// const { errorHandler } = require('./middleware/errorMiddleware');
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
@@ -11,6 +19,7 @@ const {
 const {
   HandlerLogin,
   HandlerSignUp,
+  HandlerGetUser,
 } = require("./Controllers/HandlerAccount.js");
 const {
   createMovie,
@@ -51,7 +60,13 @@ app.post("/api/login", authenticate, (req, res) => HandlerLogin(req, res));
 //API SignUp
 app.post("/api/signup", (req, res) => HandlerSignUp(req, res));
 
+app.get("/api/user", authenticate, (req, res) => HandlerGetUser(req, res));
+
 //** API Handler Data Movies ***/
+app.get('/api/get-movie-detail/:id', (req, res) => {
+    const movieId = req.params.id;
+    getMovieById(req, res, movieId)
+})
 
 //------------- API Admin -----------------
 //API Create Movie
