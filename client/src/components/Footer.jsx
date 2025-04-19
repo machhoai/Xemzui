@@ -2,12 +2,11 @@
 import React from 'react';
 import { FaFacebookF, FaYoutube, FaTwitter, FaInstagram } from 'react-icons/fa';
 import vnflag from '../assets/images/vn_flag.svg'; // Ensure the path is correct
-import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
         <footer className="bg-[#0F111A] text-white py-10 text-sm">
-            <div className="max-w-7xl mx-auto px-4">
+            <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col items-start">
                     <div className="mb-4 flex items-center gap-2 bg-[#78140f] px-3 py-2.5 rounded-3xl shadow-inner">
                         <img src={vnflag} alt="Vietnam Flag" className="w-5 h-5" />

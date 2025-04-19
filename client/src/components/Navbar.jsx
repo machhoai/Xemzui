@@ -1,33 +1,53 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { FaSearch, FaUserCircle, FaSignOutAlt, FaCaretDown, FaMobileAlt, FaFacebookF, FaYoutube, FaTwitter, FaInstagram } from 'react-icons/fa';
+import { FaSearch, FaUserCircle, FaSignOutAlt, FaCaretDown, FaMobileAlt } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
 
 const Header = ({ isLoggedIn }) => {
   const navigate = useNavigate();
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const handleLogout = () => {
     console.log('Đăng xuất');
     navigate('/login');
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <header className="bg-[#0c0c0c] text-white px-6 py-3 flex items-center justify-between shadow-md font-medium">
+      <header
+        className={`fixed top-0 left-0 w-full z-50 px-6 py-3 flex items-center justify-between font-medium ${isScrolled ? 'bg-[#0F111A]' : 'bg-transparent'}`}>
         <a href="/phimhay" className="flex items-center gap-2">
           <div className="text-left leading-tight">
-            <span className="text-xl font-semibold">XemZui</span><br />
+            <span className="text-white text-xl font-semibold">XemZui</span><br />
             <span className="text-xs text-gray-300">Cười rụng rổ</span>
           </div>
         </a>
-        <div className="hidden md:flex items-center bg-[#2f2f2f] rounded-lg px-4 py-2 w-80 ml-6">
-          <FaSearch className="text-gray-400 mr-2" />
+        <div className="hidden md:flex items-center bg-[#2f2f2f] rounded-lg px-4 py-2 w-80 ml-6 focus-within:ring-2 focus-within:ring-white">
+          <FaSearch className="text-white mr-2" />
           <input
             type="text"
             placeholder="Tìm kiếm phim, diễn viên"
             className="bg-transparent outline-none text-sm text-white flex-grow placeholder:text-gray-400"
           />
         </div>
-        <nav className="hidden lg:flex items-center gap-6 text-sm mx-8">
+        <nav className="text-white hidden lg:flex items-center gap-6 text-sm mx-8">
           <Link to="/chu-de" className="hover:text-yellow-400">Chủ Đề</Link>
           <Link to="/duyet-tim" className="hover:text-yellow-400">Duyệt tìm</Link>
           <Link to="/phim-le" className="hover:text-yellow-400">Phim Lẻ</Link>
