@@ -1,34 +1,69 @@
 import React, { useState, useEffect } from "react";
 import MovieCard from "./MovieCard";
 
-function MovieList() {
-  const [movies, setMovies] = useState([]); // State để lưu danh sách phim
-  const [loading, setLoading] = useState(true); // State để kiểm tra trạng thái loading
-  const [error, setError] = useState(null); // State để lưu lỗi nếu có
+// Map genre ID sang tên genre
+const GENRE_MAP = {
+  28: "Action",
+  12: "Adventure",
+  16: "Animation",
+  35: "Comedy",
+  80: "Crime",
+  99: "Documentary",
+  18: "Drama",
+  10751: "Family",
+  14: "Fantasy",
+  36: "History",
+  27: "Horror",
+  10402: "Music",
+  9648: "Mystery",
+  10749: "Romance",
+  878: "Science Fiction",
+  10770: "TV Movie",
+  53: "Thriller",
+  10752: "War",
+  37: "Western",
+};
 
-  // Fetch movies từ API
+function MovieList() {
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     const fetchMovies = async () => {
+      console.log("Fetching movies...");
       try {
-        const response = await fetch("/api/movies");
-        // Kiểm tra xem response có ok không
+        const response = await fetch(`http://localhost:8000/api/movie`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
         if (!response.ok) {
           throw new Error("Failed to fetch movies");
         }
 
         const data = await response.json();
-        console.log("Dữ liệu trả về từ API:", data.movies);
+        console.log(data.movies);
 
         if (data.movies) {
-          setMovies(data.movies); // Cập nhật danh sách phim
+          // ✨ Gắn genres vào từng movie
+          const moviesWithGenres = data.movies.map((movie) => ({
+            ...movie,
+            genres: movie.genre_ids?.map((id) => GENRE_MAP[id]).filter(Boolean),
+          }));
+
+          setMovies(moviesWithGenres);
         } else {
           console.error("API không trả về movies");
         }
       } catch (error) {
-        setError(error.message); // Lưu thông báo lỗi vào state
+        setError(error.message);
         console.error("Failed to fetch movies:", error);
       } finally {
-        setLoading(false); // Kết thúc trạng thái loading
+        setLoading(false);
       }
     };
 
@@ -37,21 +72,16 @@ function MovieList() {
 
   return (
     <div className="movie-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {/* Nếu có lỗi, hiển thị thông báo lỗi */}
       {error && <div className="text-red-500">Lỗi: {error}</div>}
 
-      {/* Nếu đang loading, hiển thị thông báo đang tải */}
       {loading ? (
         <div className="text-gray-500">Đang tải danh sách phim...</div>
+      ) : movies.length > 0 ? (
+        movies.map((movie) => (
+          <MovieCard key={movie._id || movie.id} movie={movie} />
+        ))
       ) : (
-        // Nếu không có lỗi và không đang tải, hiển thị danh sách phim
-        movies.length > 0 ? (
-          movies.map((movie) => (
-            <MovieCard key={movie._id || movie.id} movie={movie} />
-          ))
-        ) : (
-          <div className="text-gray-500">Không có phim nào</div>
-        )
+        <div className="text-gray-500">Không có phim nào</div>
       )}
     </div>
   );

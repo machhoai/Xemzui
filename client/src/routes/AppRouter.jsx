@@ -16,8 +16,8 @@ import WelcomeLoad from "../components/WelcomeLoad";
 import MovieDetail from "../pages/MovieDetail";
 import Footer from "../components/Footer";
 import AdminRoute from "./adminRoutes";
-import Sidebar from "../components/admin/Sidebar";
-import MovieManagement from "../pages/admin/movies/MovieManagement";
+// import Sidebar from "../components/admin/Sidebar";
+// import MovieManagement from "../pages/admin/movies/MovieManagement";
 
 const AppRouter = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

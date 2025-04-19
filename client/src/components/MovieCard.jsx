@@ -2,8 +2,6 @@ import React from "react";
 import star_icon from "../assets/icons/star.png";
 
 export default function MovieCard({ movie }) {
-    console.log("Dữ liệu movie trong MovieCard:", movie); // Kiểm tra dữ liệu
-  // Kiểm tra nếu `movie` không tồn tại hoặc thiếu dữ liệu
   if (!movie) {
     console.error("Movie is undefined or null");
     return null;
@@ -11,24 +9,25 @@ export default function MovieCard({ movie }) {
 
   const posterUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-    : "https://via.placeholder.com/500x750?text=No+Image"; // Fallback nếu không có poster
+    : "https://via.placeholder.com/500x750?text=No+Image";
 
-  const title = movie.title || "Untitled"; // Fallback nếu không có tiêu đề
-  const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"; // Fallback nếu không có đánh giá
-  const genres = movie.genres?.join(" ● ") || "Unknown genres"; // Fallback nếu không có thể loại
+  const title = movie.title || "Untitled";
+  const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
+  const genres =
+    Array.isArray(movie.genres) && movie.genres.length > 0
+      ? movie.genres.join(" ● ")
+      : "Unknown genres";
 
   return (
-    <div className="movie-card max-w-60 rounded-lg overflow-hidden relative bg-gray-800 shadow-md">
+    <div className="movie-card max-w-60 rounded-lg overflow-hidden relative">
       <div className="top w-full h-80 rounded-lg overflow-hidden relative">
-        <img
-          src={posterUrl}
-          alt={title}
-          className="h-full w-full object-cover"
-        />
+        <img src={posterUrl} alt={title} className="h-full w-full" />
+
         <span className="absolute top-2 left-2 h-5 px-2 py-1 bg-black/50 rounded-full text-white text-xs font-semibold flex items-center gap-1">
           <img src={star_icon} alt="Rating" className="h-full" />
           <p>{rating}</p>
         </span>
+
         <span
           className="absolute top-2 right-2 z-30 cursor-pointer"
           onClick={() => console.log(`Heart clicked for ${title}`)}
@@ -36,11 +35,12 @@ export default function MovieCard({ movie }) {
           <HeartIcon className="size-6 text-red-500" />
         </span>
       </div>
-      <div className="bottom p-4">
+
+      <div className="bottom">
         <p className="mt-2 movie-title text-xl text-white font-semibold truncate whitespace-nowrap overflow-hidden">
           {title}
         </p>
-        <span className="mt-1 flex items-center gap-2 text-sm text-gray-400 w-full font-regular">
+        <span className="mt-1 flex items-center gap-2 text-sm text-white w-full font-regular">
           <p className="truncate whitespace-nowrap overflow-hidden">{genres}</p>
         </span>
       </div>

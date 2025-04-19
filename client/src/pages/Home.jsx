@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectFade, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
+import MovieList from "../components/MovieList";
 
 export default function Home() {
   const topSlides = [
@@ -107,7 +108,7 @@ export default function Home() {
 
         <div className="px-4 py-6">
           {/* MovieCard component hiển thị phim */}
-          <MovieCard />
+          <MovieList />
         </div>
       </main>
     </>

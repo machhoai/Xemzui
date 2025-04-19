@@ -39,53 +39,23 @@ const getMovieById = asyncHandler(async (req, res, movieId) => {
 
 const getMovies = asyncHandler(async (req, res) => {
   try {
-    const {
-      category,
-      time,
-      language,
-      rate,
-      year,
-      director,
-      boxOffice,
-      search,
-    } = req.query;
-
-    let query = {
-      ...(category && { category }),
-      ...(time && { time }),
-      ...(language && { language }),
-      ...(rate && { rate }),
-      ...(year && { year }),
-      ...(director && { director: { $regex: director, $options: "i" } }),
-      ...(boxOffice && { boxOffice: { $regex: boxOffice, $options: "i" } }),
-      ...(search && { name: { $regex: search, $options: "i" } }),
-    };
-    
-    //load pagination
-    const page = Number(req.query.pageNumber) || 1;
-    const limit = 2;
+    const page = parseInt(req.query.page)  || 1; // Default to page 1 if not provided
+    const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
-   
 
-    //find movie bằng query, skip và limit
-    const movies = await Movie.find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-      console.log("Danh sách phim tìm được:", movies);
-    // lấy tổng số của movies
-    const count = await Movie.countDocuments(query);
-
-    //gửi res tới movie và tổng số của movie
+    const movies = await MoviesCollection.find().skip(skip).limit(limit).toArray();
+    const total = await MoviesCollection.countDocuments();
+    console.log(movies);
+    console.log(total);
     res.json({
       movies,
-      page,
-      pages: Math.ceil(count / limit),
-      totalMovies: count,
+      total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

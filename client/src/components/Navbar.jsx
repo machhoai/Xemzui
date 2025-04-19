@@ -8,6 +8,7 @@ const Header = ({ isLoggedIn }) => {
 
   const handleLogout = () => {
     console.log('Đăng xuất');
+    // Gọi hàm logout và cập nhật isLoggedIn trong component cha
     navigate('/login');
   };
 
@@ -22,7 +23,6 @@ const Header = ({ isLoggedIn }) => {
 
     window.addEventListener('scroll', handleScroll);
 
-    // Cleanup the event listener when the component unmounts
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };

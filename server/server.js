@@ -5,28 +5,24 @@ const dotenv = require('dotenv');
 const { runConnect, closeConnection } = require('./config/ConnectDB');
 const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middleware/Auth.js');
 const { HandlerLogin, HandlerSignUp } = require('./Controllers/HandlerAccount.js');
-const { getMovieById } = require('./Controllers/MoviesController.js');
+const { getMovieById, getMovies } = require('./Controllers/MoviesController.js');
 // const { errorHandler } = require('./middleware/errorMiddleware');
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const dotenv = require("dotenv");
-const { runConnect, closeConnection } = require("./config/ConnectDB");
-const {
-  authenticate,
-  refreshAccessToken,
-  authenticateAdmin,
-} = require("./middleware/Auth.js");
-const {
-  HandlerLogin,
-  HandlerSignUp,
-  HandlerGetUser,
-} = require("./Controllers/HandlerAccount.js");
-const {
-  createMovie,
-  deleteMovie,
-  deleteAllMovie,
-  getMovies,
-} = require("./Controllers/MoviesController.js");
+// const {
+//   //authenticate,
+//   refreshAccessToken,
+//   authenticateAdmin,
+// } = require("./middleware/Auth.js");
+// const {
+//   HandlerLogin,
+//   HandlerSignUp,
+//   HandlerGetUser,
+// } = require("./Controllers/HandlerAccount.js");
+// const {
+//   createMovie,
+//   deleteMovie,
+//   deleteAllMovie,
+//   getMovies,
+// } = require("./Controllers/MoviesController.js");
 const { errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config();
@@ -82,7 +78,10 @@ app.delete("/api/movies", authenticateAdmin, (req, res) =>
   deleteAllMovie(req, res)
 );
 
-app.get("/api/movies", getMovies);
+app.get('/api/movie', (req, res) => {
+  console.log("hjddhfkjdfh");
+  getMovies(req, res)
+})
 
 
 
