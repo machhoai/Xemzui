@@ -8,6 +8,7 @@ import Home from '../pages/Home';
 import { motion } from "motion/react";
 import WelcomeLoad from '../components/WelcomeLoad';
 import MovieDetail from '../pages/MovieDetail';
+import Footer from '../components/Footer';
 
 const AppRouter = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,6 +31,7 @@ const AppRouter = () => {
                     <>
                         <Navbar isLoggedIn={isLoggedIn}/>
                         <Home />
+                        <Footer />
                     </>
                     } 
                 />
