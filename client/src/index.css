@@ -13,3 +13,8 @@ body::-webkit-scrollbar {
 :root{
     background-color: #1e1e1e;
 }
+
+:root::-webkit-scrollbar
+{
+    display: none; /* Chrome, Safari, Opera */
+}

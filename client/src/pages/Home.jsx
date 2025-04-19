@@ -6,7 +6,6 @@ import WelcomeLoad from "../components/WelcomeLoad";
 export default function Home() {
     return (
         <>
-            <WelcomeLoad />
             <h1>Home page</h1>
         </>
     );
