@@ -6,7 +6,7 @@ export default function WelcomeLoad() {
   return (
     <motion.div
       initial={{ opacity: 1}}
-      whileInView={{ opacity: 0}}
+      animate ={{ opacity: 0, display: "none" }}
       transition={{
         delay: 2,
         duration: 1,
@@ -16,7 +16,7 @@ export default function WelcomeLoad() {
       <LampContainer>
         <motion.h1
           initial={{ opacity: 0.5, y: 100 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate ={{ opacity: 1, y: 0 }}
           transition={{
             delay: 0.3,
             duration: 0.8,
@@ -27,7 +27,7 @@ export default function WelcomeLoad() {
         </motion.h1>
         <motion.h3
           initial={{ opacity: 0.5, y: 100 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate ={{ opacity: 1, y: 0 }}
           transition={{
             delay: 0.3,
             duration: 0.8,
@@ -55,7 +55,7 @@ export const LampContainer = ({
         className="relative flex w-full flex-1 scale-y-125 items-center justify-center isolate z-0 ">
         <motion.div
           initial={{ opacity: 0.5, width: "15rem" }}
-          whileInView={{ opacity: 1, width: "30rem" }}
+          animate ={{ opacity: 1, width: "30rem" }}
           transition={{
             delay: 0.3,
             duration: 0.8,
@@ -72,7 +72,7 @@ export const LampContainer = ({
         </motion.div>
         <motion.div
           initial={{ opacity: 0.5, width: "15rem" }}
-          whileInView={{ opacity: 1, width: "30rem" }}
+          animate ={{ opacity: 1, width: "30rem" }}
           transition={{
             delay: 0.3,
             duration: 0.8,
@@ -95,7 +95,7 @@ export const LampContainer = ({
           className="absolute inset-auto z-50 h-36 w-[28rem] -translate-y-1/2 rounded-full bg-cyan-500 opacity-50 blur-3xl"></div>
         <motion.div
           initial={{ width: "8rem" }}
-          whileInView={{ width: "16rem" }}
+          animate ={{ width: "16rem" }}
           transition={{
             delay: 0.3,
             duration: 0.8,
@@ -104,7 +104,7 @@ export const LampContainer = ({
           className="absolute inset-auto z-30 h-36 w-64 -translate-y-[6rem] rounded-full bg-cyan-400 blur-2xl"></motion.div>
         <motion.div
           initial={{ width: "15rem" }}
-          whileInView={{ width: "30rem" }}
+          animate ={{ width: "30rem" }}
           transition={{
             delay: 0.3,
             duration: 0.8,

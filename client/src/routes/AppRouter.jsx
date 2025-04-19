@@ -7,30 +7,63 @@ import Navbar from '../components/Navbar';
 import Home from '../pages/Home';
 import { motion } from "motion/react";
 import WelcomeLoad from '../components/WelcomeLoad';
+import MovieDetail from '../pages/MovieDetail';
 
 const AppRouter = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     return (
         <Router>
             <motion.div
-            initial={{ opacity: 1, height: "0px" }}
-            whileInView={{ opacity: 1, height: "fit-content" }}
-            transition={{
-              delay: 3,
-              duration: 0.8,
-              ease: "easeInOut",
-            }}
+                initial={{ display: "block", zIndex: 1000000 }}
+                animate={{ display: "none", zIndex: -1000000 }}
+                transition={{
+                    delay: 3,
+                    duration: 0,
+                    ease: "easeInOut",
+                }} className="overflow-hidden absolute inset-0 w-screen h-screen"
             >
-                <Navbar isLoggedIn={isLoggedIn} />
+                <WelcomeLoad/>
             </motion.div>
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/Login" element={<LoginPage onLogin={() => setIsLoggedIn(true)}/>} />
-                <Route path="/SignUp" element={<SignupPage/>} />
-                <Route path="/ForgotPass" element={<ForgotPassword />} />
+                
+                <Route path="/" element={
+                    <>
+                        <Navbar isLoggedIn={isLoggedIn}/>
+                        <Home />
+                    </>
+                    } 
+                />
+                <Route path="/Login" element={
+                    <>
+                        <Navbar isLoggedIn={isLoggedIn}/>
+                        <LoginPage onLogin={() => setIsLoggedIn(true)}/>
+                    </>
+                    } 
+                />
+                <Route path="/SignUp" element={
+                    <>
+                        <Navbar isLoggedIn={isLoggedIn}/>
+                        <SignupPage/>
+                    </>
+                    } 
+                />
+                <Route path="/ForgotPass" element={
+                    <>
+                        <Navbar isLoggedIn={isLoggedIn}/>
+                        <ForgotPassword/>
+                    </>
+                    } 
+                />
+                <Route path="/movie/:id" element={
+                    <>
+                        <MovieDetail/>
+                    </>
+                    } 
+                />
             </Routes>
         </Router>
     );
 };
+
 
 export default AppRouter;
