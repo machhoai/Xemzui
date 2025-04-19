@@ -11,6 +11,7 @@ const {
 const {
   HandlerLogin,
   HandlerSignUp,
+  HandlerGetUser,
 } = require("./Controllers/HandlerAccount.js");
 const {
   createMovie,
@@ -49,6 +50,8 @@ app.post("/api/login", authenticate, (req, res) => HandlerLogin(req, res));
 
 //API SignUp
 app.post("/api/signup", (req, res) => HandlerSignUp(req, res));
+
+app.get("/api/user", authenticate, (req, res) => HandlerGetUser(req, res));
 
 //** API Handler Data Movies ***/
 
