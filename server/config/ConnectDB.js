@@ -1,5 +1,6 @@
+require('dotenv').config(); // Load environment variables from .env file
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://admin:11122004@cluster0.fv5recd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.MONGODB_URI;
 
 const client = new MongoClient(uri, {
     serverApi: {
