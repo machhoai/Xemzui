@@ -36,43 +36,43 @@ export default function Home() {
           loop={true}
           className="w-full h-full"
         >
-          {topSlides.map((slide, index) => (
+         {topSlides.map((slide, index) => (
             <SwiperSlide key={index}>
-              <a href={slide.url} className="block w-full h-full relative">
+                <a href={slide.url} className="block w-full h-full relative">
                 {/* Background */}
                 <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${slide.image})` }}
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${slide.image})` }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
                 </div>
 
                 {/* Nội dung */}
                 <div className="relative z-10 p-10 h-full flex flex-col justify-end text-white max-w-5xl">
-                  <h3 className="text-3xl font-bold mb-1">{slide.title}</h3>
-                  <h4 className="text-xl italic mb-4">{slide.engTitle}</h4>
-                  <div className="flex flex-wrap gap-3 mb-3 text-sm font-semibold">
+                    <h3 className="text-3xl font-bold mb-1">{slide.title}</h3>
+                    <h4 className="text-xl italic mb-4">{slide.engTitle}</h4>
+                    <div className="flex flex-wrap gap-3 mb-3 text-sm font-semibold">
                     <span className="bg-yellow-600 px-3 py-1 rounded">IMDb {slide.imdb}</span>
                     <span className="bg-green-600 px-3 py-1 rounded">{slide.quality}</span>
                     <span className="bg-red-600 px-3 py-1 rounded">{slide.age}</span>
                     <span className="bg-gray-700 px-3 py-1 rounded">{slide.year}</span>
                     <span className="bg-gray-700 px-3 py-1 rounded">{slide.duration}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
+                    </div>
+                    <div className="flex flex-wrap gap-2">
                     {slide.genres.map((genre, idx) => (
-                      <a
+                        <button
                         key={idx}
-                        href="#"
-                        className="bg-white/10 hover:bg-white/20 transition text-white px-3 py-1 text-xs rounded-full"
-                      >
+                        onClick={(e) => e.preventDefault()} // Ngăn redirect nếu click
+                        className="bg-white/10 hover:bg-white/20 transition text-white px-3 py-1 text-xs rounded-full cursor-default"
+                        >
                         {genre}
-                      </a>
+                        </button>
                     ))}
-                  </div>
+                    </div>
                 </div>
-              </a>
+                </a>
             </SwiperSlide>
-          ))}
+            ))}
         </Swiper>
       </div>
 
