@@ -16,6 +16,7 @@ const {
   createMovie,
   deleteMovie,
   deleteAllMovie,
+  getMovies,
 } = require("./Controllers/MoviesController.js");
 const { errorHandler } = require("./middleware/errorMiddleware");
 
@@ -65,6 +66,10 @@ app.delete("/api/movies/:id", authenticateAdmin, (req, res) =>
 app.delete("/api/movies", authenticateAdmin, (req, res) =>
   deleteAllMovie(req, res)
 );
+
+app.get("/api/movies", getMovies);
+
+
 
 // xử lí lỗi middleware ---> luôn đặt ở cuối trước các router để throw lỗi json
 app.use(errorHandler);

@@ -38,11 +38,12 @@ const getMovies = asyncHandler(async (req, res) => {
       ...(boxOffice && { boxOffice: { $regex: boxOffice, $options: "i" } }),
       ...(search && { name: { $regex: search, $options: "i" } }),
     };
-
+    
     //load pagination
     const page = Number(req.query.pageNumber) || 1;
     const limit = 2;
     const skip = (page - 1) * limit;
+   
 
     //find movie bằng query, skip và limit
     const movies = await Movie.find(query)
@@ -50,6 +51,7 @@ const getMovies = asyncHandler(async (req, res) => {
       .skip(skip)
       .limit(limit);
 
+      console.log("Danh sách phim tìm được:", movies);
     // lấy tổng số của movies
     const count = await Movie.countDocuments(query);
 
