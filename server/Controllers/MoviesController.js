@@ -1,6 +1,6 @@
-const MoviesData = require("../Data/MovieData.js");
-const Movie = require("../Models/MoviesModel");
 const asyncHandler = require("express-async-handler");
+const {ObjectId } = require("mongodb");
+const MoviesCollection = require("../config/ConnectDB").MoviesCollection;
 
 // ******** PUBLIC CONTROLLER ********
 
@@ -16,70 +16,24 @@ const importMovies = asyncHandler(async (req, res) => {
 
 // get all movie
 // GET /api/movies
-const getMovies = asyncHandler(async (req, res) => {
-    try {
-        const {
-            category,
-            time,
-            language,
-            rate,
-            year,
-            director,
-            boxOffice,
-            search,
-        } = req.query;
 
-        let query = {
-            ...(category && { category }),
-            ...(time && { time }),
-            ...(language && { language }),
-            ...(rate && { rate }),
-            ...(year && { year }),
-            ...(director && { director: { $regex: director, $options: "i" } }),
-            ...(boxOffice && { boxOffice: { $regex: boxOffice, $options: "i" } }),
-            ...(search && { name: { $regex: search, $options: "i" } }),
-        };
-
-        //load pagination
-        const page = Number(req.query.pageNumber) || 1;
-        const limit = 2;
-        const skip = (page - 1) * limit;
-
-        //find movie bằng query, skip và limit
-        const movies = await Movie.find(query)
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit);
-
-        // lấy tổng số của movies
-        const count = await Movie.countDocuments(query);
-
-        //gửi res tới movie và tổng số của movie
-        res.json({
-            movies,
-            page,
-            pages: Math.ceil(count / limit),
-            totalMovies: count,
-        });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-});
 
 // get movie với id
 // GET /api/movies/:id
-const getMovieById = asyncHandler(async (req, res) => {
+const getMovieById = asyncHandler(async (req, res, movieId) => {
     try {
-        const movie = await Movie.findById(req.params.id);
-        if (movie) {
-            res.json(movie);
-        } else {
-            res.status(404);
-            throw new Error("Movie not found");
+        // Convert string ID to ObjectId
+        const movie = await MoviesCollection.findOne({ id: movieId});
+
+        if (!movie) {
+          return res.status(404).json({ error: "Movie not found" });
         }
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+    
+        res.json(movie);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+      }
 });
 
 // get top rate movie
@@ -289,7 +243,6 @@ const createMovie = asyncHandler(async (req, res) => {
 
 module.exports = {
     importMovies,
-    getMovies,
     getMovieById,
     getTopRatedMovies,
     getRandomMovies,

@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const { runConnect, closeConnection } = require('./config/ConnectDB');
 const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middleware/Auth.js');
 const { HandlerLogin, HandlerSignUp } = require('./Controllers/HandlerAccount.js');
+const { getMovieById } = require('./Controllers/MoviesController.js');
 // const { errorHandler } = require('./middleware/errorMiddleware');
 
 dotenv.config();
@@ -35,7 +36,10 @@ app.post('/api/login', authenticate, (req, res) => HandlerLogin(req, res))
 app.post('/api/signup', (req, res) => HandlerSignUp(req, res))
 
 //** API Handler Data Movies ***/
-
+app.get('/api/get-movie-detail/:id', (req, res) => {
+    const movieId = req.params.id;
+    getMovieById(req, res, movieId)
+})
 
 
 //------------- API Admin -----------------
