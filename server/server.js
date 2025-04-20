@@ -96,11 +96,19 @@ app.delete("/api/movies", authenticateAdmin, (req, res) =>
 );
 
 app.get('/api/movie', (req, res) => {
-  console.log("hjddhfkjdfh");
   getMovies(req, res)
 })
 
-
+app.get("/api/movies", (req, res) => {
+  const { genres, years, sort,search } = req.query;
+  // Kiểm tra tham số có hợp lệ không
+  console.log(genres);
+  console.log(years);
+  console.log(sort);
+  console.log(search);
+ getMovies(req, res, genres, years, sort, search)
+  // Xử lý logic lấy phim ở đây
+});
 
 // xử lí lỗi middleware ---> luôn đặt ở cuối trước các router để throw lỗi json
 app.use(errorHandler);
