@@ -1,5 +1,5 @@
 import { refreshAccessToken } from "./RefreshAccessTokenAPI";
-var userid = null;
+
 //Đăng xuất
 export function HandlerUserLogout({ setIsLoggedIn }) {
     fetch("http://localhost:8000/api/logout", {
@@ -56,7 +56,6 @@ export function HandlerUserLogin(email, password, onLogin, setIsAdmin) {
             if (!data) return;
             onLogin(); //chuyển trạng thái đăng nhập
             console.log("isAdmin:", data.user.isAdmin);
-            userid = data.user._id;
             if (data.user.isAdmin) {
                 setIsAdmin(true);
                 window.location.href = '/admin';
@@ -82,7 +81,7 @@ export function HandlerUserLogin(email, password, onLogin, setIsAdmin) {
 
 //lấy thông tin cá nhân của user
 export function HandlerGetUserInfo(setUserInfo, setIsLoggedIn) {
-    fetch(`http://localhost:8000/api/getuserinfo/${userid}`, {
+    fetch(`http://localhost:8000/api/getuserinfo`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -98,7 +97,104 @@ export function HandlerGetUserInfo(setUserInfo, setIsLoggedIn) {
         })
         .then((data) => {
             if (!data) return;
+            console.log("User info:", data.user);
             setUserInfo(data.user);
+        })
+        .catch((error) => {
+            console.error("Lỗi:", error);
+        });
+}
+
+//Cập nhật thông tin cá nhân của user
+export function HandlerUpdateUserInfo(userInfo) {
+    fetch(`http://localhost:8000/api/updateuserinfo`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+            fullName: userInfo.name,
+            email: userInfo.email,
+        }),
+    })
+        .then(async (response) => {
+            if (response.status === 401) { //access token hết hạn
+                refreshAccessToken(() => { HandlerUpdateUserInfo(userInfo) });
+                return;
+            }
+            else if (!response.ok) {
+                const errorData = await response.json();
+                window.alert(errorData.message || "Cập nhật thông tin thất bại!");
+                return;
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (!data) return;
+            alert(data.message);
+        })
+        .catch((error) => {
+            console.error("Lỗi:", error);
+        });
+}
+
+//Đổi mật khẩu
+export function HandlerChangePassword(oldPassword, newPassword) {
+    fetch(`http://localhost:8000/api/changepassword`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+            oldPassword,
+            newPassword,
+        }),
+    })
+        .then(async (response) => {
+            if (response.status === 401) { //access token hết hạn
+                refreshAccessToken(() => { HandlerChangePassword(oldPassword, newPassword) });
+                return;
+            }
+            else if (!response.ok) {
+                const errorData = await response.json();
+                window.alert(errorData.message || "Đổi mật khẩu thất bại. Vui lòng thử lại!");
+                return;
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (!data) return;
+            alert(data.message);
+        })
+        .catch((error) => {
+            console.error("Lỗi:", error);
+        });
+}
+
+//reset mật khẩu 
+export function HandlerResetPassword(email) {
+    fetch(`http://localhost:8000/api/sendmailtoresetpass`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            email,
+        }),
+    })
+        .then(async (response) => {
+            if (!response.ok) {
+                const errorData = await response.json();
+                window.alert(errorData.message || "Gửi email reset mật khẩu thất bại. Vui lòng thử lại!");
+                return;
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (!data) return;
+            console.log("message:", data.message);
         })
         .catch((error) => {
             console.error("Lỗi:", error);

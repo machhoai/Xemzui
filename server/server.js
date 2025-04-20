@@ -6,6 +6,7 @@ const { runConnect, closeConnection } = require('./config/ConnectDB');
 const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middleware/Auth.js');
 const { HandlerLogin, HandlerSignUp, HandlerGetUser, HandlerLogout } = require('./Controllers/HandlerAccount.js');
 const { getMovieById, getMovies, getGenresList } = require('./Controllers/MoviesController.js');
+const { HandlerGetUserInfor, HandlerUpdateUserInfor, HandlerChangePassword, HandlerSendResetPasswordLink } = require('./Controllers/HandlerUserData.js');
 // const { errorHandler } = require('./middleware/errorMiddleware');
 // const {
 //   //authenticate,
@@ -64,7 +65,16 @@ app.get("/api/user", authenticate, (req, res) => HandlerGetUser(req, res));
 app.get("/api/logout", (req, res) => HandlerLogout(req, res));
 
 // API get user infor
-app.get("/api/getuserinfo/:id", authenticate, (req, res) => HandlerGetUser(req, res));
+app.get("/api/getuserinfo", authenticate, (req, res) => HandlerGetUserInfor(req, res));
+
+// API update user infor
+app.put("/api/updateuserinfo", authenticate, (req, res) => HandlerUpdateUserInfor(req, res));
+
+// API change password
+app.put("/api/changepassword", authenticate, (req, res) => HandlerChangePassword(req, res));
+
+// API send mail to reset password
+app.post("/api/sendmailtoresetpass", (req, res) => HandlerSendResetPasswordLink(req, res));
 
 //** API Handler Data Movies ***/
 app.get('/api/get-movie-detail/:id', (req, res) => {

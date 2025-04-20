@@ -27,8 +27,8 @@ async function HandlerLogin(req, res) {
 
     // Tạo access token và refresh token
     console.log("HandlerLogin - user: ", user);
-    const accessToken = createAccessToken(user.email, user.isAdmin);
-    const refreshToken = createRefreshToken(user.email, user.isAdmin);
+    const accessToken = createAccessToken(user._id.toString(), user.email, user.isAdmin);
+    const refreshToken = createRefreshToken(user._id.toString(), user.email, user.isAdmin);
 
     //ghi token vào cookie
     res
@@ -47,7 +47,7 @@ async function HandlerLogin(req, res) {
       })
       .json({
         message: "Đăng nhập thành công",
-        user: { email: user.email, name: user.name , isAdmin: user.isAdmin },
+        user: { email: user.email, name: user.fullName , isAdmin: user.isAdmin },
       });
   } catch (error) {
     console.error("Lỗi khi xác thực người dùng:", error);

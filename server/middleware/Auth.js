@@ -6,13 +6,18 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 //tao access token
-const createAccessToken = (email, isAdmin) => {
-    return jwt.sign({ email: email, isAdmin: isAdmin }, process.env.SECRET_ACCESS, { expiresIn: process.env.EXPIRES_IN_ACCESS });
+const createAccessToken = ( id ,email, isAdmin) => {
+    return jwt.sign({ id: id, email: email, isAdmin: isAdmin }, process.env.SECRET_ACCESS, { expiresIn: process.env.EXPIRES_IN_ACCESS });
 }
 
 //tao refresh token
-const createRefreshToken = (email, isAdmin) => {
-    return jwt.sign({ email: email, isAdmin: isAdmin }, process.env.SECRET_REFRESH, { expiresIn: process.env.EXPIRES_IN_REFRESH });
+const createRefreshToken = (id,email, isAdmin) => {
+    return jwt.sign({ id:id, email: email, isAdmin: isAdmin }, process.env.SECRET_REFRESH, { expiresIn: process.env.EXPIRES_IN_REFRESH });
+}
+
+//tạo token rest password
+const createResetPasswordToken = (id, email) => {
+    return jwt.sign({ id: id, email: email }, process.env.SECRET_ACCESS, { expiresIn: process.env.EXPIRES_IN_ACCESS });
 }
 
 //xin cấp lại access token mới
@@ -24,7 +29,7 @@ const refreshAccessToken = (req, res) => {
     console.log("refreshAccessToken - refreshToken: ", refreshToken);
     try {
         const payload = jwt.verify(refreshToken, process.env.SECRET_REFRESH);
-        const newAccessToken = jwt.sign({ email: payload.email, isAdmin: payload.isAdmin }, process.env.SECRET_ACCESS, {
+        const newAccessToken = jwt.sign({id: payload.id, email: payload.email, isAdmin: payload.isAdmin }, process.env.SECRET_ACCESS, {
             expiresIn: process.env.EXPIRES_IN_ACCESS,
         });
         console.log("refreshAccessToken - accessToken: ", newAccessToken);
@@ -79,4 +84,4 @@ function authenticateAdmin(req, res, next) {
     });
 }
 
-module.exports = { createAccessToken, createRefreshToken, refreshAccessToken, authenticate, authenticateAdmin }
+module.exports = { createAccessToken, createRefreshToken, refreshAccessToken, authenticate, authenticateAdmin, createResetPasswordToken }
