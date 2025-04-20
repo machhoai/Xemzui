@@ -4,15 +4,6 @@ import { cn } from "../untils/tailwind-merge";
 
 export default function WelcomeLoad() {
   return (
-    <motion.div
-      initial={{ opacity: 1}}
-      animate ={{ opacity: 0, display: "none" }}
-      transition={{
-        delay: 2,
-        duration: 1,
-        ease: "easeInOut",
-      }} className="z-1000000 overflow-hidden"
-      >
       <LampContainer>
         <motion.h1
           initial={{ opacity: 0.5, y: 100 }}
@@ -37,7 +28,6 @@ export default function WelcomeLoad() {
           Ở nhà cũng vui như rạp!
         </motion.h3>
       </LampContainer>
-    </motion.div>
   );
 }
 

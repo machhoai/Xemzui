@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { FaUser, FaEnvelope, FaLock, FaHeart, FaSignOutAlt, FaEdit } from 'react-icons/fa';
-import { HandlerUserLogout, HandlerGetUserInfo } from '../services/HandlerUserService';
+import { HandlerUserLogout, HandlerGetUserInfo, HandlerUpdateUserInfo, HandlerChangePassword } from '../services/HandlerUserService';
 
 const ProfilePage = ({ setIsLoggedIn }) => {
     const [user, setUser] = useState({
-        name: 'Nguyễn Văn A',
-        email: 'nguyenvana@example.com',
+        name: '',
+        email: '',
     });
 
     const [currentPassword, setCurrentPassword] = useState('');
@@ -31,12 +31,12 @@ const ProfilePage = ({ setIsLoggedIn }) => {
 
     const handlePasswordChange = (e) => {
         e.preventDefault();
-        // Xử lý đổi mật khẩu
+        // kiểm tra mật khẩu mới và xác nhận mật khẩu có khớp không
         if (newPassword !== confirmPassword) {
             alert('Mật khẩu mới không khớp!');
             return;
         }
-        alert('Đổi mật khẩu thành công!');
+        HandlerChangePassword(currentPassword, newPassword)
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
@@ -46,7 +46,7 @@ const ProfilePage = ({ setIsLoggedIn }) => {
         e.preventDefault();
         // Xử lý cập nhật thông tin
         setIsEditing(false);
-        alert('Cập nhật thông tin thành công!');
+        HandlerUpdateUserInfo(user)
     };
 
     return (

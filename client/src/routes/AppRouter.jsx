@@ -18,7 +18,11 @@ import WelcomeLoad from "../components/WelcomeLoad";
 import MovieDetail from "../pages/MovieDetail";
 import Footer from "../components/Footer";
 import ProfilePage from "../pages/ProfilePage";
-import MovieCreate from "../components/admin/movies/MovieCreate";
+import ResetPasswordPage from "../pages/ResetPassword";
+ import SearchPage from "../pages/SearchPage";
+ import MovieCreate from "../components/admin/movies/MovieCreate";
+import {OrbitProgress} from "react-loading-indicators";
+import { useLoading } from "../contexts/LoadingContext";
 import Sidebar from "../components/admin/layout/Sidebar";
 import DashboardAdmin from "../pages/admin/movies/DashboardAdmin";
 
@@ -27,7 +31,7 @@ const AppRouter = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const [loading, setLoading] = useState(true);
+  const { isLoading, setLoading } = useLoading();
 
   //kiểm tra phiên đăng nhập
   useEffect(() => {
@@ -37,11 +41,8 @@ const AppRouter = () => {
         credentials: "include",
       })
         .then((response) => {
-          if (response.status === 401) {
-            //access token hết hạn
-            refreshAccessToken(() => {
-              checkLoginStatus();
-            });
+          if (response.status === 401) { //access token hết hạn
+            refreshAccessToken(() => { checkLoginStatus() }, setIsLoggedIn);
             return;
           }
           return response.json();
@@ -67,22 +68,41 @@ const AppRouter = () => {
     checkLoginStatus();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    setLoading(true);
+  
+    // giả sử sau 3s nếu chưa tắt thì auto tắt (để tránh kẹt)
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  
+    return () => clearTimeout(timeout);
+  }, [location.pathname]);
 
   return (
     <>
       <motion.div
-        initial={{ display: "block", zIndex: 1000000 }}
-        animate={{ display: "none", zIndex: -1000000 }}
+        initial={{opacity: 1, display: "block", zIndex: 1000000 }}
+        animate={!isLoading?{opacity:0, display: "none", zIndex: 1000000 }:{opacity: 1, display: "block", zIndex: 1000000 }}
         transition={{
-          delay: 3,
-          duration: 0,
+          delay: 2,
+          duration: 0.8,
           ease: "easeInOut",
         }}
-        className="overflow-hidden absolute inset-0 w-screen h-screen"
+        className="fixed overflow-hidden inset-0 w-screen h-screen"
       >
+        <motion.div
+          initial={{opacity: 0}}
+          animate={{opacity:1}}
+          transition={{
+            delay: 4,
+            duration: 0.5,
+            ease: "easeInOut",
+          }}
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-20 z-1000000 "
+        >
+          <OrbitProgress color="#8391a7" size="small" text="" textColor=""/>
+        </motion.div>
         <WelcomeLoad />
       </motion.div>
 
@@ -99,7 +119,7 @@ const AppRouter = () => {
           path="/"
           element={
             <>
-              <Home />
+              {/* <Home /> */}
               <Footer />
             </>
           }
@@ -131,6 +151,14 @@ const AppRouter = () => {
             </>
           }
         />
+        <Route
+          path="/ResetPassword/:token"
+          element={
+            <>
+              <ResetPasswordPage />
+            </>
+          }
+        />
         {isLoggedIn && (
           <Route
             path="/Profile"
@@ -155,6 +183,15 @@ const AppRouter = () => {
               <Footer />
             </>
           }
+        />
+        <Route 
+          path="/search/:searchTerm" 
+          element={
+             <>
+              <SearchPage />
+              <Footer />
+            </>
+          } 
         />
         {/* Admin routes */}
         {isAdmin && (

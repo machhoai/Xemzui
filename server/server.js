@@ -5,7 +5,8 @@ const dotenv = require('dotenv');
 const { runConnect, closeConnection } = require('./config/ConnectDB');
 const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middleware/Auth.js');
 const { HandlerLogin, HandlerSignUp, HandlerGetUser, HandlerLogout } = require('./Controllers/HandlerAccount.js');
-const { getMovieById, getMovies, createMovie, deleteMovie, deleteAllMovie } = require('./Controllers/MoviesController.js');
+const { getMovieById, getMovies, getGenresList, createMovie, deleteMovie, deleteAllMovie } = require('./Controllers/MoviesController.js');
+const { HandlerGetUserInfor, HandlerUpdateUserInfor, HandlerChangePassword, HandlerSendResetPasswordLink } = require('./Controllers/HandlerUserData.js');
 // const { errorHandler } = require('./middleware/errorMiddleware');
 // const {
 //   //authenticate,
@@ -24,6 +25,7 @@ const { getMovieById, getMovies, createMovie, deleteMovie, deleteAllMovie } = re
 //   getMovies,
 // } = require("./Controllers/MoviesController.js");
 const { errorHandler } = require("./middleware/errorMiddleware");
+const { log } = require('console');
 
 dotenv.config();
 
@@ -63,7 +65,16 @@ app.get("/api/user", authenticate, (req, res) => HandlerGetUser(req, res));
 app.get("/api/logout", (req, res) => HandlerLogout(req, res));
 
 // API get user infor
-app.get("/api/getuserinfo/:id", authenticate, (req, res) => HandlerGetUser(req, res));
+app.get("/api/getuserinfo", authenticate, (req, res) => HandlerGetUserInfor(req, res));
+
+// API update user infor
+app.put("/api/updateuserinfo", authenticate, (req, res) => HandlerUpdateUserInfor(req, res));
+
+// API change password
+app.put("/api/changepassword", authenticate, (req, res) => HandlerChangePassword(req, res));
+
+// API send mail to reset password
+app.post("/api/sendmailtoresetpass", (req, res) => HandlerSendResetPasswordLink(req, res));
 
 //** API Handler Data Movies ***/
 app.get('/api/get-movie-detail/:id', (req, res) => {
@@ -86,11 +97,18 @@ app.delete("/api/movies", authenticateAdmin, (req, res) =>
 );
 
 app.get('/api/movie', (req, res) => {
-  console.log("hjddhfkjdfh");
   getMovies(req, res)
 })
 
+app.get("/api/movies", (req, res) => {
+  const { genres, years, sort,search } = req.query;
+ getMovies(req, res, genres, years, sort, search)
+  // Xử lý logic lấy phim ở đây
+});
 
+app.get("/api/getGenres", (req, res) => {
+  getGenresList(req, res)
+})
 
 // xử lí lỗi middleware ---> luôn đặt ở cuối trước các router để throw lỗi json
 app.use(errorHandler);
