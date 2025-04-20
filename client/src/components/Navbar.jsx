@@ -1,14 +1,14 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { FaSearch, FaUserCircle, FaSignOutAlt, FaCaretDown, FaMobileAlt } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
+import { HandlerUserLogout } from '../services/HandlerUserService';
 
-const Header = ({ isLoggedIn }) => {
-  const navigate = useNavigate();
+const Header = ({ isLoggedIn, setIsLoggedIn }) => {
+  // const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
 
   const handleLogout = () => {
-    console.log('Đăng xuất');
-    navigate('/login');
+    HandlerUserLogout({ setIsLoggedIn });
   };
 
   useEffect(() => {
@@ -75,12 +75,12 @@ const Header = ({ isLoggedIn }) => {
           </div>
           {isLoggedIn ? (
             <div className="relative group">
-              <button className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full hover:bg-gray-100">
+              <button className="flex items-center mb-0.5 gap-2 bg-white text-black px-4 py-2 rounded-full hover:bg-gray-100">
                 <FaUserCircle className="text-lg" />
                 <span className="text-sm font-medium">Thành viên</span>
               </button>
-              <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-md hidden group-hover:block z-50">
-                <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">Hồ sơ</Link>
+              <div className="absolute right-0 mt-0 w-40 bg-white text-black rounded shadow-md hidden group-hover:block z-50">
+                <Link to="/Profile" className="block px-4 py-2 hover:bg-gray-100">Hồ sơ</Link>
                 <button
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"

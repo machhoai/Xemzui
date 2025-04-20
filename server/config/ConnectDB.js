@@ -17,7 +17,7 @@ const GenresCollection = MoviesDB.collection('Genres');
 const MoviesCollection = MoviesDB.collection('Movies');
 const VoMCollection = MoviesDB.collection('VideosOfMovies');
 const UsersCollection = MoviesDB.collection('Users');
-const BlacklistCollection = MoviesDB.collection('Blacklist');
+const BlacklistCollection = MoviesDB.collection('BlackList');
 
 // Connect the client to the server
 async function runConnect() {

@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaGoogle, FaFilm } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { HandlerUserLogin } from "../services/HandlerUserService";
 import "./css/Login.css";
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = ({ onLogin, setIsAdmin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-
-  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,51 +32,10 @@ const LoginPage = ({ onLogin }) => {
     }
 
     if (isValid) {
-      // Xử lý đăng nhập
-      console.log("Đăng nhập với:", email, password);
-
-      fetch("http://localhost:8000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (!data) return;
-          alert(data.message);
-          // Gọi API để lấy thông tin user
-          fetch("http://localhost:8000/api/user", {
-            method: "GET",
-            credentials: "include",
-          })
-            .then((response) => response.json())
-            .then((userData) => {
-              onLogin();
-              console.log("Dữ liệu user:", userData);
-              if (userData.isAdmin) {
-                navigate("/admin");
-              } else {
-                navigate("/");
-              }
-            })
-            .catch((error) => {
-              console.error("Lỗi khi lấy thông tin user:", error);
-              navigate("/");
-            });
-        })
-        .catch((error) => {
-          console.error("Lỗi:", error);
-        });
-    }
-  };
-
-  const handleGoogleLogin = () => {
-    // Xử lý đăng nhập bằng Google
-    console.log("Đăng nhập bằng Google");
-  };
+      // Gọi API đăng nhập
+      HandlerUserLogin(email, password, onLogin, setIsAdmin);
+    };
+  }
 
   return (
     <div className="login-container">
@@ -135,15 +93,6 @@ const LoginPage = ({ onLogin }) => {
             Đăng Nhập
           </button>
         </form>
-
-        <div className="divider">
-          <span>HOẶC</span>
-        </div>
-
-        <button className="google-login" onClick={handleGoogleLogin}>
-          <FaGoogle className="google-icon" />
-          Đăng nhập với Google
-        </button>
 
         <div className="signup-link">
           Chưa có tài khoản? <Link to="/SignUp">Tạo tài khoản</Link>

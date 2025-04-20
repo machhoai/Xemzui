@@ -3,65 +3,74 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation
 } from "react-router-dom";
 import { useState, useEffect } from "react";
 import LoginPage from "../pages/Login";
 import SignupPage from "../pages/SignUp";
 import ForgotPassword from "../pages/ForgotPass";
 import Navbar from "../components/Navbar";
+import Sidebar from "../components/admin/layout/Sidebar";
+import { refreshAccessToken } from "../services/RefreshAccessTokenAPI";
 import Home from "../pages/Home";
 import HomeAdmin from "../pages/admin/HomeAdmin"
 import { motion } from "motion/react";
 import WelcomeLoad from "../components/WelcomeLoad";
 import MovieDetail from "../pages/MovieDetail";
 import Footer from "../components/Footer";
+import ProfilePage from "../pages/ProfilePage";
 import AdminRoute from "./adminRoutes";
 // import Sidebar from "../components/admin/Sidebar";
 // import MovieManagement from "../pages/admin/movies/MovieManagement";
 
 const AppRouter = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
   const [loading, setLoading] = useState(true);
 
-  // Đồng bộ isLoggedIn khi app khởi động
+  //kiểm tra phiên đăng nhập
   useEffect(() => {
-    fetch("http://localhost:8000/api/user", {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && !data.error) {
-          setIsLoggedIn(true);
-        }
-        setLoading(false);
+    const checkLoginStatus = async () => {
+      fetch("http://localhost:8000/api/user", {
+        method: "GET",
+        credentials: "include",
       })
-      .catch((error) => {
-        console.error("Lỗi khi lấy thông tin user:", error);
-        setLoading(false);
-      });
-  }, []);
+        .then((response) => {
+          if (response.status === 401) { //access token hết hạn
+            refreshAccessToken(() => { checkLoginStatus() });
+            return;
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (!data) {
+            setLoading(false);
+            return;
+          };
 
-  // Hàm xử lý đăng xuất
-  const handleLogout = () => {
-    fetch("http://localhost:8000/api/logout", {
-      method: "POST",
-      credentials: "include",
-    })
-      .then(() => {
-        setIsLoggedIn(false);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi đăng xuất:", error);
-      });
-  };
+          setIsLoggedIn(true);
+
+          if (data.isAdmin) {
+            console.log("isAdmin:", data.isAdmin);
+            setIsAdmin(true);
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Lỗi khi lấy thông tin user:", error);
+        });
+    }
+    checkLoginStatus();
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <Router>
+    <>
       <motion.div
         initial={{ display: "block", zIndex: 1000000 }}
         animate={{ display: "none", zIndex: -1000000 }}
@@ -75,13 +84,19 @@ const AppRouter = () => {
         <WelcomeLoad />
       </motion.div>
 
+      {isAdminRoute ? (
+        isAdmin && <Sidebar />//navbar admin
+      ) : (
+        <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>//navbar user
+      )}
+
       <Routes>
         {/* Route công khai */}
+
         <Route
           path="/"
           element={
             <>
-              <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
               <Home />
               <Footer />
             </>
@@ -91,8 +106,7 @@ const AppRouter = () => {
           path="/Login"
           element={
             <>
-              <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-              <LoginPage onLogin={() => setIsLoggedIn(true)} />
+              <LoginPage onLogin={() => setIsLoggedIn(true)} setIsAdmin={setIsAdmin} />
             </>
           }
         />
@@ -100,7 +114,6 @@ const AppRouter = () => {
           path="/SignUp"
           element={
             <>
-              <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
               <SignupPage />
             </>
           }
@@ -109,43 +122,61 @@ const AppRouter = () => {
           path="/ForgotPass"
           element={
             <>
-              <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
               <ForgotPassword />
             </>
           }
         />
+        {isLoggedIn && (
+          <Route
+            path="/Profile"
+            element={
+              <>
+                <ProfilePage setIsLoggedIn={setIsLoggedIn} />
+              </>
+            }
+          />
+        )}
+        {/* Redirect nếu người dùng chưa đăng nhập */}
+        {!isLoggedIn && (
+          <>
+            <Route
+              path="/Profile"
+              element={<Navigate to="/" replace />}
+            />
+          </>
+        )}
         <Route
           path="/movie/:id"
           element={
             <>
-              <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
               <MovieDetail />
               <Footer />
             </>
           }
         />
+        {/* Admin routes */}
+        {isAdmin && (
+          <>
+            <Route path="/admin" element={<HomeAdmin />} />
+            <Route path="/admin/movies" element={<HomeAdmin />} />
+          </>
+        )}
 
-        {/* Route admin */}
-        <Route element={<AdminRoute />}>
-          <Route
-            path="/admin"
-            element={
-                <>
-                <HomeAdmin />
-                </>
-            }
-          />
-          <Route
-            path="/admin/movies"
-            element={
-                <>
-                <HomeAdmin />
-                </>
-            }
-          />
-        </Route>
+        {/* Redirect nếu người dùng cố vào /admin mà không có quyền */}
+        {!isAdmin && (
+          <>
+            <Route
+              path="/admin"
+              element={<Navigate to="/" replace />}
+            />
+            <Route
+              path="/admin/movies"
+              element={<Navigate to="/" replace />}
+            />
+          </>
+        )}
       </Routes>
-    </Router>
+    </>
   );
 };
 
