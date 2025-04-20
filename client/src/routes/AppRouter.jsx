@@ -3,25 +3,24 @@ import {
   Routes,
   Route,
   Navigate,
-  useLocation
+  useLocation,
 } from "react-router-dom";
 import { useState, useEffect } from "react";
 import LoginPage from "../pages/Login";
 import SignupPage from "../pages/SignUp";
 import ForgotPassword from "../pages/ForgotPass";
 import Navbar from "../components/Navbar";
-import Sidebar from "../components/admin/layout/Sidebar";
 import { refreshAccessToken } from "../services/RefreshAccessTokenAPI";
 import Home from "../pages/Home";
-import HomeAdmin from "../pages/admin/HomeAdmin"
+import DashboardMovieAdmin from "../pages/admin/movies/DashboardMovieAdmin";
 import { motion } from "motion/react";
 import WelcomeLoad from "../components/WelcomeLoad";
 import MovieDetail from "../pages/MovieDetail";
 import Footer from "../components/Footer";
 import ProfilePage from "../pages/ProfilePage";
-import AdminRoute from "./adminRoutes";
-// import Sidebar from "../components/admin/Sidebar";
-// import MovieManagement from "../pages/admin/movies/MovieManagement";
+import MovieCreate from "../components/admin/movies/MovieCreate";
+import Sidebar from "../components/admin/layout/Sidebar";
+import DashboardAdmin from "../pages/admin/movies/DashboardAdmin";
 
 const AppRouter = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -38,8 +37,11 @@ const AppRouter = () => {
         credentials: "include",
       })
         .then((response) => {
-          if (response.status === 401) { //access token hết hạn
-            refreshAccessToken(() => { checkLoginStatus() });
+          if (response.status === 401) {
+            //access token hết hạn
+            refreshAccessToken(() => {
+              checkLoginStatus();
+            });
             return;
           }
           return response.json();
@@ -48,7 +50,7 @@ const AppRouter = () => {
           if (!data) {
             setLoading(false);
             return;
-          };
+          }
 
           setIsLoggedIn(true);
 
@@ -61,7 +63,7 @@ const AppRouter = () => {
         .catch((error) => {
           console.error("Lỗi khi lấy thông tin user:", error);
         });
-    }
+    };
     checkLoginStatus();
   }, []);
 
@@ -85,9 +87,9 @@ const AppRouter = () => {
       </motion.div>
 
       {isAdminRoute ? (
-        isAdmin && <Sidebar />//navbar admin
+        isAdmin && <Sidebar /> //navbar admin
       ) : (
-        <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>//navbar user
+        <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} /> //navbar user
       )}
 
       <Routes>
@@ -106,7 +108,10 @@ const AppRouter = () => {
           path="/Login"
           element={
             <>
-              <LoginPage onLogin={() => setIsLoggedIn(true)} setIsAdmin={setIsAdmin} />
+              <LoginPage
+                onLogin={() => setIsLoggedIn(true)}
+                setIsAdmin={setIsAdmin}
+              />
             </>
           }
         />
@@ -139,10 +144,7 @@ const AppRouter = () => {
         {/* Redirect nếu người dùng chưa đăng nhập */}
         {!isLoggedIn && (
           <>
-            <Route
-              path="/Profile"
-              element={<Navigate to="/" replace />}
-            />
+            <Route path="/Profile" element={<Navigate to="/" replace />} />
           </>
         )}
         <Route
@@ -157,22 +159,17 @@ const AppRouter = () => {
         {/* Admin routes */}
         {isAdmin && (
           <>
-            <Route path="/admin" element={<HomeAdmin />} />
-            <Route path="/admin/movies" element={<HomeAdmin />} />
+            <Route path="/admin" element={<DashboardAdmin />} />
+            <Route path="/admin/movies" element={<DashboardMovieAdmin />} />
+            <Route path="/admin/movies/create" element={<MovieCreate />} />
           </>
         )}
 
         {/* Redirect nếu người dùng cố vào /admin mà không có quyền */}
         {!isAdmin && (
           <>
-            <Route
-              path="/admin"
-              element={<Navigate to="/" replace />}
-            />
-            <Route
-              path="/admin/movies"
-              element={<Navigate to="/" replace />}
-            />
+            <Route path="/admin" element={<Navigate to="/" replace />} />
+            <Route path="/admin/movies" element={<Navigate to="/" replace />} />
           </>
         )}
       </Routes>
