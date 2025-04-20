@@ -1,4 +1,5 @@
-const { MoviesCollection } = require("../config/ConnectDB");
+const { log } = require("console");
+const { MoviesCollection, GenresCollection } = require("../config/ConnectDB");
 const asyncHandler = require("express-async-handler");
 const {ObjectId } = require("mongodb");
 
@@ -96,6 +97,17 @@ const getMovies = asyncHandler(async (req, res) => {
       currentPage: page,
       totalPages: Math.ceil(total / limit),
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+const getGenresList = asyncHandler(async (req, res) => {
+  try {
+    const genres = await GenresCollection.find({}).toArray();
+    console.log(genres);
+    res.json(genres);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -330,6 +342,7 @@ const createMovie = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
+  getGenresList,
   importMovies,
   getMovies,
   getMovieById,

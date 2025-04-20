@@ -19,3 +19,25 @@ export async function fetchMovieDetail(id) {
         return null;
     }
 }
+
+export async function fetchGetGenres() {
+    try {
+        const response = await fetch(`http://localhost:8000/api/getGenres`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            }
+        );
+        if (!response.ok) {
+            throw new Error("Failed to fetch movies by genre");
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching movies by genre:", error);
+        return null;
+    }
+}

@@ -1,17 +1,18 @@
 import { BrowserRouter as Router } from "react-router-dom";
-import AppRouter from './routes/AppRouter'
-import './App.css'
-import MovieDetail from './pages/MovieDetail'
-import MovieHero from './pages/test'
+import AppRouter from './routes/AppRouter';
+import { LoadingProvider } from './contexts/LoadingContext';
+import './App.css';
 
 function App() {
   return (
     <div className="App">
       <Router>
-        <AppRouter />
+        <LoadingProvider>
+          <AppRouter />
+        </LoadingProvider>
       </Router>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

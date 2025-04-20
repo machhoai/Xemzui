@@ -1,19 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MovieList from './MovieList';  // Import MovieList
+import { fetchGetGenres } from '../services/MoviesApi'; // Import API function
 
-const GENRE_MAP = {
-  28: "Action", 12: "Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
-  99: "Documentary", 18: "Drama", 10751: "Family", 14: "Fantasy",
-  36: "History", 27: "Horror", 10402: "Music", 9648: "Mystery",
-  10749: "Romance", 878: "Science Fiction", 10770: "TV Movie",
-  53: "Thriller", 10752: "War", 37: "Western",
-};
-
-const YEARS = ["2025", "2024", "2023", "2022", "2021"];
+const YEARS = ["2025", "2024"];
 
 const MovieFilter = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedYears, setSelectedYears] = useState([]);
+  const [genreList, setGenreList] = useState([]);
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const genreList = await fetchGetGenres(); // Fetch danh sách thể loại
+        const map = genreList.reduce((acc, genre) => {
+          acc[genre.id] = genre.name; // Tạo GENRE_MAP từ genreList
+          return acc;
+        }, {});
+        setGenreList(map);
+      } catch (error) {
+        console.error("Lỗi khi fetch genres:", error);
+      }
+    };
+  
+    fetchGenres();
+  }, []);
 
   const toggleValue = (value, setState) => {
     setState((prev) =>
@@ -22,11 +33,11 @@ const MovieFilter = () => {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto">
+    <div className=" mx-auto">
       {/* Bộ lọc */}
-      <div className="bg-white dark:bg-[#2f2f2f] p-3 rounded-lg shadow-md space-y-3 w-1/3 mx-auto">
+      <div className="bg-white dark:bg-[#2f2f2f] p-3 rounded-lg shadow-md space-y-3 w-1/3 mx-auto mb-6">
         <FilterGroup title="Thể loại">
-          {Object.entries(GENRE_MAP).map(([id, name]) => (
+          {Object.entries(genreList).map(([id, name]) => (
             <FilterButton
               key={id}
               label={name}
@@ -35,7 +46,6 @@ const MovieFilter = () => {
             />
           ))}
         </FilterGroup>
-
         <FilterGroup title="Năm phát hành">
           {YEARS.map((year) => (
             <FilterButton
@@ -47,16 +57,14 @@ const MovieFilter = () => {
           ))}
         </FilterGroup>
       </div>
-
-      {/* Khoảng cách giữa bộ lọc và danh sách phim */}
-      <div className="my-6"></div> {/* Thêm margin cho khoảng cách */}
-
       {/* Danh sách phim với bộ lọc */}
-      <MovieList
-        searchTerm=""
-        selectedGenres={selectedGenres}
-        selectedYears={selectedYears}
-      />
+      <div className='flex flex-col items-center'>
+        <MovieList
+          searchTerm=""
+          selectedGenres={selectedGenres}
+          selectedYears={selectedYears}
+        />
+      </div>
     </div>
   );
 };

@@ -63,15 +63,14 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
           isScrolled ? 'bg-[#0F111A] shadow-md' : 'bg-transparent'
         }`}
       >
-        <a href="/phimhay" className="flex items-center gap-2">
+        <a href="/" className="flex items-center gap-2">
           <div className="text-left leading-tight">
             <span className="text-white text-xl font-semibold">XemZui</span><br />
-            <span className="text-xs text-gray-300">Cười rụng rổ</span>
           </div>
         </a>
 
         {/* 🔍 Thanh tìm kiếm */}
-        <div className="relative hidden md:flex items-center bg-[#1f1f1f] rounded-lg px-4 py-2 w-80 ml-6 focus-within:ring-2 focus-within:ring-yellow-400">
+        <div className="relative hidden md:flex items-center bg-[#1f1f1f2f] rounded-lg px-4 py-2 w-80 ml-6 focus-within:ring-2 focus-within:ring-yellow-400">
           <FaSearch className="text-white mr-2" />
           <input
             type="text"
@@ -119,18 +118,18 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
 
         {/* 📱 App & User */}
         <div className="flex items-center gap-4 ml-auto">
-          <div className="hidden md:flex items-center bg-[#2f2f2f] text-white px-3 py-1 rounded-full hover:bg-[#3a3a3a]">
-            <FaMobileAlt className="text-yellow-400 mr-2" />
+          <div className="hidden md:flex items-center bg-[#2f2f2f] text-white px-4 py-1 gap-2 rounded-full hover:bg-[#3a3a3a]">
+            <img src="/vn_flag.svg" alt="" className='size-5'/>
             <div className="text-left text-xs">
-              <span className="text-gray-300">Tải ứng dụng</span><br />
-              <strong className="text-white text-sm">RoPhim</strong>
+              <span className="text-gray-300">Ngôn ngữ</span><br />
+              <strong className="text-white text-sm">Tiếng Việt</strong>
             </div>
           </div>
 
           {isLoggedIn ? (
             <div className="relative group">
               <button className="flex items-center mb-0.5 gap-2 bg-white text-black px-4 py-2 rounded-full hover:bg-gray-100">
-                <FaUserCircle className="text-lg" />
+                <FaUserCircle size={20} />
                 <span className="text-sm font-medium">Thành viên</span>
               </button>
               <div className="absolute right-0 mt-0 w-40 bg-white text-black rounded shadow-md hidden group-hover:block z-50">
@@ -139,13 +138,13 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"
                 >
-                  <FaSignOutAlt /> Đăng xuất
+                  <FaSignOutAlt size={20}/> Đăng xuất
                 </button>
               </div>
             </div>
           ) : (
-            <Link to="/login" className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-100">
-              <FaUserCircle className="inline mr-2" /> Đăng nhập
+            <Link to="/login" className="bg-white flex gap-2 text-black px-4 py-2 rounded-full text-sm hover:bg-gray-100">
+              <FaUserCircle size={20} /> Đăng nhập
             </Link>
           )}
         </div>

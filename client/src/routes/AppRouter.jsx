@@ -22,6 +22,7 @@ import ProfilePage from "../pages/ProfilePage";
  import SearchPage from "../pages/SearchPage";
 import AdminRoute from "./adminRoutes";
 import {OrbitProgress} from "react-loading-indicators";
+import { useLoading } from "../contexts/LoadingContext";
 // import Sidebar from "../components/admin/Sidebar";
 // import MovieManagement from "../pages/admin/movies/MovieManagement";
 
@@ -30,7 +31,7 @@ const AppRouter = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const [isloading, setLoading] = useState(true);
+  const { isLoading, setLoading } = useLoading();
 
   //kiểm tra phiên đăng nhập
   useEffect(() => {
@@ -67,11 +68,22 @@ const AppRouter = () => {
     checkLoginStatus();
   }, []);
 
+  useEffect(() => {
+    setLoading(true);
+  
+    // giả sử sau 3s nếu chưa tắt thì auto tắt (để tránh kẹt)
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  
+    return () => clearTimeout(timeout);
+  }, [location.pathname]);
+
   return (
     <>
       <motion.div
         initial={{opacity: 1, display: "block", zIndex: 1000000 }}
-        animate={!isloading?{opacity:0, display: "none", zIndex: 1000000 }:{opacity: 1, display: "block", zIndex: 1000000 }}
+        animate={!isLoading?{opacity:0, display: "none", zIndex: 1000000 }:{opacity: 1, display: "block", zIndex: 1000000 }}
         transition={{
           delay: 2,
           duration: 0.8,

@@ -19,7 +19,7 @@ export default function MovieCard({ movie }) {
   const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
   const genres =
     Array.isArray(movie.genres) && movie.genres.length > 0
-      ? movie.genres.join(" ● ")
+      ? movie.genres.join(" - ")
       : "Unknown genres";
 
   const handleCardClick = () => {

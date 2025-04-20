@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const { runConnect, closeConnection } = require('./config/ConnectDB');
 const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middleware/Auth.js');
 const { HandlerLogin, HandlerSignUp, HandlerGetUser, HandlerLogout } = require('./Controllers/HandlerAccount.js');
-const { getMovieById, getMovies } = require('./Controllers/MoviesController.js');
+const { getMovieById, getMovies, getGenresList } = require('./Controllers/MoviesController.js');
 // const { errorHandler } = require('./middleware/errorMiddleware');
 // const {
 //   //authenticate,
@@ -24,6 +24,7 @@ const { getMovieById, getMovies } = require('./Controllers/MoviesController.js')
 //   getMovies,
 // } = require("./Controllers/MoviesController.js");
 const { errorHandler } = require("./middleware/errorMiddleware");
+const { log } = require('console');
 
 dotenv.config();
 
@@ -91,14 +92,13 @@ app.get('/api/movie', (req, res) => {
 
 app.get("/api/movies", (req, res) => {
   const { genres, years, sort,search } = req.query;
-  // Kiểm tra tham số có hợp lệ không
-  console.log(genres);
-  console.log(years);
-  console.log(sort);
-  console.log(search);
  getMovies(req, res, genres, years, sort, search)
   // Xử lý logic lấy phim ở đây
 });
+
+app.get("/api/getGenres", (req, res) => {
+  getGenresList(req, res)
+})
 
 // xử lí lỗi middleware ---> luôn đặt ở cuối trước các router để throw lỗi json
 app.use(errorHandler);
