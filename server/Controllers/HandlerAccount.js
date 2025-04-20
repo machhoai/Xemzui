@@ -88,7 +88,7 @@ async function HandlerSignUp(req, res) {
       fullName: fullName,
       email: email,
       password: hashedPassword,
-      isAdmin: true,
+      isAdmin: false,
     };
 
     // Lưu người dùng mới vào cơ sở dữ liệu
