@@ -19,6 +19,7 @@ import WelcomeLoad from "../components/WelcomeLoad";
 import MovieDetail from "../pages/MovieDetail";
 import Footer from "../components/Footer";
 import ProfilePage from "../pages/ProfilePage";
+ import SearchPage from "../pages/SearchPage";
 import AdminRoute from "./adminRoutes";
 import {OrbitProgress} from "react-loading-indicators";
 // import Sidebar from "../components/admin/Sidebar";
@@ -162,6 +163,15 @@ const AppRouter = () => {
               <Footer />
             </>
           }
+        />
+        <Route 
+          path="/search/:searchTerm" 
+          element={
+             <>
+              <SearchPage />
+              <Footer />
+            </>
+          } 
         />
         {/* Admin routes */}
         {isAdmin && (

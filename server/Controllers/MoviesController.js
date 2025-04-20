@@ -44,11 +44,14 @@ const getMovies = asyncHandler(async (req, res) => {
     const skip = (page - 1) * limit;
 
     // Lấy các query parameters từ request
-    const { genres, years, sort } = req.query;
+    const { genres, years, sort,search } = req.query;
 
     // Khởi tạo filter rỗng
     const filter = {};
-
+    if (search) {
+      const regex = new RegExp(search, 'i'); // Không phân biệt hoa thường
+      filter.title = regex;
+    }
     // Lọc theo genre_ids (chứa ít nhất 1 trong danh sách genres)
     if (genres) {
       const genreArray = genres.split(',').map((g) => parseInt(g));

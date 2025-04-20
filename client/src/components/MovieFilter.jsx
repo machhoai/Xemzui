@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import MovieCard from "./MovieCard"; // Đảm bảo bạn đã import MovieCard
+import React, { useState } from 'react';
+import MovieList from './MovieList';  // Import MovieList
 
 const GENRE_MAP = {
   28: "Action", 12: "Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
@@ -10,64 +10,16 @@ const GENRE_MAP = {
 };
 
 const YEARS = ["2025", "2024", "2023", "2022", "2021"];
-const SORT_OPTIONS = ["Mới nhất", "Cũ nhất", "Tên A-Z", "Tên Z-A"];
 
-export default function MovieFilter() {
+const MovieFilter = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedYears, setSelectedYears] = useState([]);
-  const [sort, setSort] = useState([]);
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const toggleValue = (value, setState) => {
     setState((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
   };
-
-  const fetchMovies = async () => {
-    const filters = {
-      genres: selectedGenres.join(","),
-      years: selectedYears.join(","),
-      sort,
-    };
-
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/movies?genres=${filters.genres}&years=${filters.years}&sort=${filters.sort}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch movies");
-      }
-
-      const data = await response.json();
-      if (data.movies) {
-        const moviesWithGenres = data.movies.map((movie) => ({
-          ...movie,
-          genres: movie.genre_ids?.map((id) => GENRE_MAP[id]).filter(Boolean),
-        }));
-        setMovies(moviesWithGenres);
-      } else {
-        console.error("API không trả về movies");
-      }
-    } catch (error) {
-      setError(error.message);
-      console.error("Failed to fetch movies:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMovies();
-  }, [selectedGenres, selectedYears, sort]);
 
   return (
     <div className="max-w-[1200px] mx-auto">
@@ -94,43 +46,20 @@ export default function MovieFilter() {
             />
           ))}
         </FilterGroup>
-
-        <FilterGroup title="Sắp xếp theo">
-          {SORT_OPTIONS.map((option) => (
-            <FilterButton
-              key={option}
-              label={option}
-              active={sort === option}
-              onClick={() => setSort(option)}
-            />
-          ))}
-        </FilterGroup>
       </div>
 
       {/* Khoảng cách giữa bộ lọc và danh sách phim */}
-      <div className="my-6"></div>
+      <div className="my-6"></div> {/* Thêm margin cho khoảng cách */}
 
-      {/* Hiển thị phim ra ngoài khung bộ lọc */}
-      {loading ? (
-        <div className="text-center text-gray-500">Đang tải...</div>
-      ) : error ? (
-        <div className="text-red-500 text-center">Lỗi: {error}</div>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {movies.length === 0 ? (
-            <div className="col-span-full text-center text-gray-500">Không có phim nào</div>
-          ) : (
-            movies.map((movie) => (
-              <div key={movie._id} className="w-full">
-                <MovieCard movie={movie} />
-              </div>
-            ))
-          )}
-        </div>
-      )}
+      {/* Danh sách phim với bộ lọc */}
+      <MovieList
+        searchTerm=""
+        selectedGenres={selectedGenres}
+        selectedYears={selectedYears}
+      />
     </div>
   );
-}
+};
 
 function FilterGroup({ title, children }) {
   return (
@@ -153,3 +82,5 @@ function FilterButton({ label, active, onClick }) {
     </button>
   );
 }
+
+export default MovieFilter;
