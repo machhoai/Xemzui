@@ -18,8 +18,8 @@ const createRefreshToken = (email, isAdmin) => {
 //xin cấp lại access token mới
 const refreshAccessToken = (req, res) => {
     const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken || !isTokenBlacklisted(refreshToken)) {
-        return res.status(403).json({ message: "Refresh token không hợp lệ" });
+    if (!refreshToken || isTokenBlacklisted(refreshToken)) {
+        return res.status(402).json({ message: "Refresh token không hợp lệ" });
     }
     console.log("refreshAccessToken - refreshToken: ", refreshToken);
     try {
@@ -37,7 +37,7 @@ const refreshAccessToken = (req, res) => {
         })
             .json({ message: 'Access token refreshed' });
     } catch (err) {
-        res.status(403).json({ message: "Refresh token hết hạn" });
+        res.status(402).json({ message: "Refresh token hết hạn" });
     }
 }
 
@@ -53,7 +53,7 @@ function authenticate(req, res, next) {
 
     jwt.verify(token, process.env.SECRET_ACCESS, (err, user) => {
         if (err) {
-            return res.status(403).json({ message: "Access token không hợp lệ hoặc đã hết hạn" });
+            return res.status(401).json({ message: "Access token không hợp lệ hoặc đã hết hạn" });
         }
         req.user = user;
         next();
@@ -64,14 +64,12 @@ function authenticateAdmin(req, res, next) {
     const token = req.cookies.accessToken;
     console.log("authenticateAdmin - token: ", token);
     if (!token) {
-        req.user = null;
-        console.log("No token provided, user is not authenticated.");
-        return next();
+        return res.status(403).json({ message: "Access denied" });
     }
 
     jwt.verify(token, process.env.SECRET_ACCESS, (err, user) => {
         if (err) {
-            return res.status(403);
+            return res.status(401).json({ message: "Access token không hợp lệ hoặc đã hết hạn" });
         }
         req.user = user;
         if (!user.isAdmin) {

@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const { runConnect, closeConnection } = require('./config/ConnectDB');
 const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middleware/Auth.js');
-const { HandlerLogin, HandlerSignUp } = require('./Controllers/HandlerAccount.js');
+const { HandlerLogin, HandlerSignUp, HandlerGetUser, HandlerLogout } = require('./Controllers/HandlerAccount.js');
 const { getMovieById, getMovies } = require('./Controllers/MoviesController.js');
 // const { errorHandler } = require('./middleware/errorMiddleware');
 // const {
@@ -43,7 +43,7 @@ runConnect();
 closeConnection();
 
 //** API Refresh Token ***/
-app.post("/refresh-token", (req, res) => {
+app.get("/api/refresh-access-token", (req, res) => {
   refreshAccessToken(req, res);
 });
 
@@ -56,7 +56,14 @@ app.post("/api/login", authenticate, (req, res) => HandlerLogin(req, res));
 //API SignUp
 app.post("/api/signup", (req, res) => HandlerSignUp(req, res));
 
+//API check the login session
 app.get("/api/user", authenticate, (req, res) => HandlerGetUser(req, res));
+
+// API Logout
+app.get("/api/logout", (req, res) => HandlerLogout(req, res));
+
+// API get user infor
+app.get("/api/getuserinfo/:id", authenticate, (req, res) => HandlerGetUser(req, res));
 
 //** API Handler Data Movies ***/
 app.get('/api/get-movie-detail/:id', (req, res) => {

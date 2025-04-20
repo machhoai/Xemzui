@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { BrowserRouter as Router } from "react-router-dom";
 import AppRouter from './routes/AppRouter'
 import './App.css'
 import MovieDetail from './pages/MovieDetail'
@@ -7,8 +7,9 @@ import MovieHero from './pages/test'
 function App() {
   return (
     <div className="App">
-      <AppRouter />
-      {/* <MovieDetail/> */}
+      <Router>
+        <AppRouter />
+      </Router>
     </div>
   )
 }

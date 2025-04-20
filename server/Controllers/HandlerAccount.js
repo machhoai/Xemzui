@@ -3,6 +3,8 @@ const {
   createAccessToken,
   createRefreshToken,
 } = require("../middleware/Auth.js");
+const {addTokenToBlacklist} = require("../middleware/Blacklist.js");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 async function HandlerLogin(req, res) {
@@ -45,7 +47,7 @@ async function HandlerLogin(req, res) {
       })
       .json({
         message: "Đăng nhập thành công",
-        user: { email: user.email, name: user.name },
+        user: { email: user.email, name: user.name , isAdmin: user.isAdmin },
       });
   } catch (error) {
     console.error("Lỗi khi xác thực người dùng:", error);
@@ -86,7 +88,7 @@ async function HandlerSignUp(req, res) {
       fullName: fullName,
       email: email,
       password: hashedPassword,
-      isAdmin: false,
+      isAdmin: true,
     };
 
     // Lưu người dùng mới vào cơ sở dữ liệu
@@ -100,15 +102,42 @@ async function HandlerSignUp(req, res) {
 }
 
 async function HandlerGetUser(req, res) {
-  // Middleware authenticate đã gán req.user nếu token hợp lệ
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return res.status(401).json({ message: "refresh token không hợp lệ hoặc hết hạn" })};
   if (!req.user) {
-    return res.status(401).json({ error: "Chưa đăng nhập" });
+    return res.status(401).json({ message: "access token không hợp lệ hoặc hết hạn" });
   }
   res.json({
     email: req.user.email,
     isAdmin: req.user.isAdmin,
-    name: req.user.name, // Nếu cần trả thêm thông tin
+    name: req.user.name,
   });
 }
 
-module.exports = { HandlerLogin, HandlerSignUp, HandlerGetUser };
+async function HandlerLogout(req, res) {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return res.status(400).json({ message: "Chưa đăng nhập hoặc phiên đăng nhập đã hêt." });
+    }
+    // Giải mã refresh token để lấy thông tin người dùng
+    const decoded = jwt.verify(refreshToken, process.env.SECRET_REFRESH);
+    //tính toán thời gian hết hạn của refresh token
+    const expiresAt = new Date(decoded.exp * 1000);
+
+    // Thêm refresh token vào danh sách đen
+    await addTokenToBlacklist(refreshToken, expiresAt);
+
+    // Xoá cookie refresh token và access token
+    res
+      .clearCookie("accessToken")
+      .clearCookie("refreshToken")
+      .json({ message: "Đăng xuất thành công" });
+  } catch (error) {
+    console.error("Lỗi khi đăng xuất:", error);
+    res.status(500).json({ message: "Lỗi máy chủ" });
+  }
+}
+
+module.exports = { HandlerLogin, HandlerSignUp, HandlerGetUser, HandlerLogout };
