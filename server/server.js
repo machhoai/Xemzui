@@ -90,13 +90,13 @@ app.get('/api/movie', (req, res) => {
 })
 
 app.get("/api/movies", (req, res) => {
-  const { genres, years, sort } = req.query;
-
+  const { genres, years, sort,search } = req.query;
   // Kiểm tra tham số có hợp lệ không
   console.log(genres);
   console.log(years);
   console.log(sort);
- getMovies(req, res, genres, years, sort)
+  console.log(search);
+ getMovies(req, res, genres, years, sort, search)
   // Xử lý logic lấy phim ở đây
 });
 
