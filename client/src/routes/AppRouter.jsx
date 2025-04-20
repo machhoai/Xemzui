@@ -19,6 +19,7 @@ import WelcomeLoad from "../components/WelcomeLoad";
 import MovieDetail from "../pages/MovieDetail";
 import Footer from "../components/Footer";
 import ProfilePage from "../pages/ProfilePage";
+import ResetPasswordPage from "../pages/ResetPassword";
 import AdminRoute from "./adminRoutes";
 // import Sidebar from "../components/admin/Sidebar";
 // import MovieManagement from "../pages/admin/movies/MovieManagement";
@@ -39,7 +40,7 @@ const AppRouter = () => {
       })
         .then((response) => {
           if (response.status === 401) { //access token hết hạn
-            refreshAccessToken(() => { checkLoginStatus() });
+            refreshAccessToken(() => { checkLoginStatus() }, setIsLoggedIn);
             return;
           }
           return response.json();
@@ -97,7 +98,7 @@ const AppRouter = () => {
           path="/"
           element={
             <>
-              <Home />
+              {/* <Home /> */}
               <Footer />
             </>
           }
@@ -123,6 +124,14 @@ const AppRouter = () => {
           element={
             <>
               <ForgotPassword />
+            </>
+          }
+        />
+        <Route
+          path="/ResetPassword/:token"
+          element={
+            <>
+              <ResetPasswordPage />
             </>
           }
         />
