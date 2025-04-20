@@ -20,6 +20,7 @@ import MovieDetail from "../pages/MovieDetail";
 import Footer from "../components/Footer";
 import ProfilePage from "../pages/ProfilePage";
 import AdminRoute from "./adminRoutes";
+import {OrbitProgress} from "react-loading-indicators";
 // import Sidebar from "../components/admin/Sidebar";
 // import MovieManagement from "../pages/admin/movies/MovieManagement";
 
@@ -28,7 +29,7 @@ const AppRouter = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const [loading, setLoading] = useState(true);
+  const [isloading, setLoading] = useState(true);
 
   //kiểm tra phiên đăng nhập
   useEffect(() => {
@@ -65,22 +66,30 @@ const AppRouter = () => {
     checkLoginStatus();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <>
       <motion.div
-        initial={{ display: "block", zIndex: 1000000 }}
-        animate={{ display: "none", zIndex: -1000000 }}
+        initial={{opacity: 1, display: "block", zIndex: 1000000 }}
+        animate={!isloading?{opacity:0, display: "none", zIndex: 1000000 }:{opacity: 1, display: "block", zIndex: 1000000 }}
         transition={{
-          delay: 3,
-          duration: 0,
+          delay: 2,
+          duration: 0.8,
           ease: "easeInOut",
         }}
-        className="overflow-hidden absolute inset-0 w-screen h-screen"
+        className="fixed overflow-hidden inset-0 w-screen h-screen"
       >
+        <motion.div
+          initial={{opacity: 0}}
+          animate={{opacity:1}}
+          transition={{
+            delay: 4,
+            duration: 0.5,
+            ease: "easeInOut",
+          }}
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-20 z-1000000 "
+        >
+          <OrbitProgress color="#8391a7" size="small" text="" textColor=""/>
+        </motion.div>
         <WelcomeLoad />
       </motion.div>
 
