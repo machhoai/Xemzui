@@ -49,7 +49,6 @@ function MovieList() {
         console.log(data.movies);
 
         if (data.movies) {
-          // ✨ Gắn genres vào từng movie
           const moviesWithGenres = data.movies.map((movie) => ({
             ...movie,
             genres: movie.genre_ids?.map((id) => GENRE_MAP[id]).filter(Boolean),

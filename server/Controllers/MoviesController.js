@@ -39,14 +39,54 @@ const getMovieById = asyncHandler(async (req, res, movieId) => {
 
 const getMovies = asyncHandler(async (req, res) => {
   try {
-    const page = parseInt(req.query.page)  || 1; // Default to page 1 if not provided
+    const page = parseInt(req.query.page) || 1;  // Default to page 1 if not provided
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const movies = await MoviesCollection.find().skip(skip).limit(limit).toArray();
-    const total = await MoviesCollection.countDocuments();
-    console.log(movies);
-    console.log(total);
+    // Lấy các query parameters từ request
+    const { genres, years, sort } = req.query;
+
+    // Khởi tạo filter rỗng
+    const filter = {};
+
+    // Lọc theo genre_ids (chứa ít nhất 1 trong danh sách genres)
+    if (genres) {
+      const genreArray = genres.split(',').map((g) => parseInt(g));
+      filter.genre_ids = { $in: genreArray };
+    }
+
+    // Lọc theo năm phát hành
+    if (years) {
+      const yearArray = years.split(',');
+      filter.release_date = {
+        $gte: `${Math.min(...yearArray)}-01-01`,
+        $lte: `${Math.max(...yearArray)}-12-31`,
+      };
+    }
+
+    // Xử lý sắp xếp (sort)
+    let sortOption = {};
+    if (sort === "Mới nhất") {
+      sortOption.release_date = -1;
+    } else if (sort === "Cũ nhất") {
+      sortOption.release_date = 1;
+    } else if (sort === "Tên A-Z") {
+      sortOption.title = 1;
+    } else if (sort === "Tên Z-A") {
+      sortOption.title = -1;
+    }
+
+    // Nếu không có filter, lấy toàn bộ phim
+    const query = Object.keys(filter).length ? filter : {};
+
+    const movies = await MoviesCollection.find(query)
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+
+    const total = await MoviesCollection.countDocuments(query);
+
     res.json({
       movies,
       total,
@@ -58,6 +98,7 @@ const getMovies = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // get top rate movie
 // GET /api/movies/rated/top
