@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import star_icon from "../assets/icons/star.png";
 
 export default function MovieCard({ movie }) {
+  const navigate = useNavigate();
+  const [isLiked, setIsLiked] = useState(false); // 👈 trạng thái "yêu thích"
+
   if (!movie) {
     console.error("Movie is undefined or null");
     return null;
@@ -18,10 +22,23 @@ export default function MovieCard({ movie }) {
       ? movie.genres.join(" ● ")
       : "Unknown genres";
 
+  const handleCardClick = () => {
+    navigate(`/movie/${movie.id}`);
+  };
+
+  const handleHeartClick = (e) => {
+    e.stopPropagation();
+    setIsLiked((prev) => !prev); // Toggle trạng thái yêu thích
+    console.log(`Heart clicked for ${title}`);
+  };
+
   return (
-    <div className="movie-card max-w-60 rounded-lg overflow-hidden relative">
+    <div
+      className="movie-card max-w-60 rounded-lg overflow-hidden relative cursor-pointer hover:scale-105 transition-transform"
+      onClick={handleCardClick}
+    >
       <div className="top w-full h-80 rounded-lg overflow-hidden relative">
-        <img src={posterUrl} alt={title} className="h-full w-full" />
+        <img src={posterUrl} alt={title} className="h-full w-full object-cover" />
 
         <span className="absolute top-2 left-2 h-5 px-2 py-1 bg-black/50 rounded-full text-white text-xs font-semibold flex items-center gap-1">
           <img src={star_icon} alt="Rating" className="h-full" />
@@ -30,9 +47,9 @@ export default function MovieCard({ movie }) {
 
         <span
           className="absolute top-2 right-2 z-30 cursor-pointer"
-          onClick={() => console.log(`Heart clicked for ${title}`)}
+          onClick={handleHeartClick}
         >
-          <HeartIcon className="size-6 text-red-500" />
+          <HeartIcon className="size-6 text-red-500" isFilled={isLiked} />
         </span>
       </div>
 
@@ -56,7 +73,7 @@ const HeartIcon = ({ className, isFilled = false }) => (
   >
     <path
       d="M352.92 80C288 80 256 144 256 144s-32-64-96.92-64c-52.76 0-94.54 44.14-95.08 96.81-1.1 109.33 86.73 187.08 183 252.42a16 16 0 0018 0c96.26-65.34 184.09-143.09 183-252.42-.54-52.67-42.32-96.81-95.08-96.81z"
-      fill={isFilled ? "#ef4444" : "none"}
+      fill={isFilled ? "currentColor" : "none"} // 👈 dùng currentColor => lấy theo text-red-500
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
