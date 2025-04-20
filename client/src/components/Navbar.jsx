@@ -13,32 +13,29 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 50);
     };
 
     window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <div className="flex flex-col">
-      {/* Header */}
       <header
-        className={`fixed top-0 left-0 w-full z-50 px-6 py-3 flex items-center justify-between font-medium ${isScrolled ? 'bg-[#0F111A]' : 'bg-transparent'}`}>
-        <a href="/" className="flex items-center gap-2">
+        className={`fixed top-0 left-0 w-full z-50 px-6 py-3 flex items-center justify-between font-medium bg-[#0F111A] shadow-md transition-all duration-300 ${
+          isScrolled ? 'bg-[#0F111A] shadow-md' : 'bg-transparent'
+        }`}
+      >
+        <a href="/phimhay" className="flex items-center gap-2">
           <div className="text-left leading-tight">
             <span className="text-white text-xl font-semibold">XemZui</span><br />
             <span className="text-xs text-gray-300">Cười rụng rổ</span>
           </div>
         </a>
-        <div className="hidden md:flex items-center bg-[#2f2f2f] rounded-lg px-4 py-2 w-80 ml-6 focus-within:ring-2 focus-within:ring-white">
+
+        {/* 🔍 Thanh tìm kiếm */}
+        <div className="hidden md:flex items-center bg-[#1f1f1f] rounded-lg px-4 py-2 w-80 ml-6 focus-within:ring-2 focus-within:ring-yellow-400">
           <FaSearch className="text-white mr-2" />
           <input
             type="text"
@@ -46,6 +43,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
             className="bg-transparent outline-none text-sm text-white flex-grow placeholder:text-gray-400"
           />
         </div>
+
+        {/* 🔗 Navigation */}
         <nav className="text-white hidden lg:flex items-center gap-6 text-sm mx-8">
           <Link to="/chu-de" className="hover:text-yellow-400">Chủ Đề</Link>
           <Link to="/duyet-tim" className="hover:text-yellow-400">Duyệt tìm</Link>
@@ -64,6 +63,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
           <Link to="/dien-vien" className="hover:text-yellow-400">Diễn Viên</Link>
           <Link to="/lich-chieu" className="hover:text-yellow-400">Lịch chiếu</Link>
         </nav>
+
+        {/* 📱 Tải App & User */}
         <div className="flex items-center gap-4 ml-auto">
           <div className="hidden md:flex items-center bg-[#2f2f2f] text-white px-3 py-1 rounded-full hover:bg-[#3a3a3a]">
             <FaMobileAlt className="text-yellow-400 mr-2" />
