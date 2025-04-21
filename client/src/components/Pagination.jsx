@@ -98,14 +98,13 @@ export default function PaginationWithHighlight({ handlePageChange, pages = 100 
         </button>
         ))}
       </div>
-
-      <button
+      {/* <button
         onClick={() => changePage(Math.min(pages.length, currentPage + 1))}
         className="px-3 py-1 text-sm rounded hover:bg-gray-200"
         disabled={currentPage === pages.length}
       >
         <ArrowForwardOutline color={"#"} height="20px" width="20px"></ArrowForwardOutline>
-      </button>
+      </button> */}
     </div>
   )
 }

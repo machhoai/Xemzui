@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { FaUser, FaEnvelope, FaLock, FaHeart, FaSignOutAlt, FaEdit } from 'react-icons/fa';
 import { HandlerUserLogout, HandlerGetUserInfo, HandlerUpdateUserInfo, HandlerChangePassword } from '../services/HandlerUserService';
-
+import { useLoading } from '../contexts/LoadingContext';
 const ProfilePage = ({ setIsLoggedIn }) => {
+    const { setLoading } = useLoading();
     const [user, setUser] = useState({
         name: '',
         email: '',
     });
+    
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -23,6 +25,7 @@ const ProfilePage = ({ setIsLoggedIn }) => {
 
     useEffect(() => {
         HandlerGetUserInfo(setUser, setIsLoggedIn);
+        setLoading(false);
     },[])
 
     const handleLogout = () => {

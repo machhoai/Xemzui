@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaLock, FaEye, FaEyeSlash, FaCheckCircle } from 'react-icons/fa';
 import { HandlerResetPassword } from '../services/HandlerUserService';
+import { useLoading } from '../contexts/LoadingContext';
 
 const ResetPasswordPage = () => {
   const { token } = useParams(); // Lấy token từ URL
@@ -10,7 +11,8 @@ const ResetPasswordPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
+  const { setLoading } = useLoading();
+  setLoading(false);
   // Validate password
   const validatePassword = (pwd) => {
     return pwd.length >= 8 && pwd.length <= 25;
@@ -19,17 +21,17 @@ const ResetPasswordPage = () => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!validatePassword(password)) {
       alert('Mật khẩu phải có độ dài từ 8 đến 25 ký tự');
       return;
     }
-    
+
     if (password !== confirmPassword) {
       alert('Mật khẩu không khớp!');
       return;
     }
-    
+
     // Gửi yêu cầu reset password đến server ở đây
     console.log('Password reset to:', password);
     // Gọi hàm reset password
@@ -56,8 +58,8 @@ const ResetPasswordPage = () => {
             <FaCheckCircle className="mx-auto text-6xl text-green-500 mb-4" />
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Đặt lại mật khẩu thành công!</h2>
             <p className="text-gray-600 mb-6">Mật khẩu của bạn đã được thay đổi. Bây giờ bạn có thể đăng nhập bằng mật khẩu mới.</p>
-            <a 
-              href="/login" 
+            <a
+              href="/login"
               className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-6 rounded-lg transition duration-300"
             >
               Đăng nhập ngay
@@ -106,7 +108,7 @@ const ResetPasswordPage = () => {
               <div className="mt-2">
                 <div className="flex items-center mb-1">
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
+                    <div
                       className={`h-2 rounded-full ${strengthColors[getPasswordStrength()]}`}
                       style={{ width: `${(getPasswordStrength() / 4) * 100}%` }}
                     ></div>

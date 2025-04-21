@@ -2,8 +2,15 @@ import { useState } from 'react';
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import './css/Signup.css';
+import { useLoading } from '../contexts/LoadingContext';
 
 const SignupPage = () => {
+    const { setLoading } = useLoading();
+
+    setTimeout(() => {
+        setLoading(false);
+    }, 100);
+
     const [formData, setFormData] = useState({
         fullname: '',
         email: '',
@@ -92,6 +99,8 @@ const SignupPage = () => {
             showPassword: !formData.showPassword
         });
     };
+
+
 
     return (
         <div className="signup-container">
