@@ -105,7 +105,7 @@ const AppRouter = () => {
             duration: 0.5,
             ease: "easeInOut",
           }}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-20 z-1000000 "
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-40 z-1000000 "
         >
           <OrbitProgress color="#8391a7" size="small" text="" textColor="" />
         </motion.div>
@@ -116,7 +116,7 @@ const AppRouter = () => {
 
   return (
     <>
-      <motion.div
+      {!isAdmin && <motion.div
         initial={{ opacity: 1, display: "block", zIndex: 1000000 }}
         animate={
           !isLoading
@@ -138,12 +138,13 @@ const AppRouter = () => {
             duration: 0.5,
             ease: "easeInOut",
           }}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-20 z-1000000 "
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-40 z-1000000 "
         >
           <OrbitProgress color="#8391a7" size="small" text="" textColor="" />
         </motion.div>
         <WelcomeLoad />
-      </motion.div>
+      </motion.div>}
+      
 
       {isAdminRoute ? (
         isAdmin && <Sidebar setIsLoggedIn={setIsLoggedIn} /> //navbar admin

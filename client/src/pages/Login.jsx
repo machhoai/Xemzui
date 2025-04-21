@@ -3,6 +3,7 @@ import { FaEye, FaEyeSlash, FaFilm } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { HandlerUserLogin } from "../services/HandlerUserService";
 import "./css/Login.css";
+import { useLoading } from "../contexts/LoadingContext";
 
 const LoginPage = ({ onLogin, setIsAdmin }) => {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ const LoginPage = ({ onLogin, setIsAdmin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const { setLoading } = useLoading();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,6 +38,10 @@ const LoginPage = ({ onLogin, setIsAdmin }) => {
       HandlerUserLogin(email, password, onLogin, setIsAdmin);
     };
   }
+
+  setTimeout(() => {
+    setLoading(false);
+  }, 100); // Giả lập thời gian tải 1 giây
 
   return (
     <div className="login-container">
