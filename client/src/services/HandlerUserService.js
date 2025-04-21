@@ -68,16 +68,6 @@ export function HandlerUserLogin(email, password, onLogin, setIsAdmin) {
         })
         .catch((error) => {
             console.error("Lỗi:", error);
-            alert("thông báo", error.message,
-                [
-                    {
-                        text: "OK",
-                        onPress: () => { },
-                        style: "cancel",
-                    },
-                ],
-                { cancelable: false }
-            );
         });
 }
 
