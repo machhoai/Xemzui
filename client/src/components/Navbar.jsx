@@ -75,6 +75,9 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
+            onBlur={() => {
+              setTimeout(() => setShowDropdown(false), 100); // Delay tí cho Link hoạt động trước
+            }}          
             placeholder="Tìm kiếm phim, diễn viên"
             className="bg-transparent outline-none text-sm text-white flex-grow placeholder:text-gray-400"
           />

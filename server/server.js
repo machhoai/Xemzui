@@ -106,7 +106,6 @@ app.get('/api/movie', (req, res) => {
 app.get("/api/movies", (req, res) => {
   const { genres, years, sort,search } = req.query;
  getMovies(req, res, genres, years, sort, search)
-  // Xử lý logic lấy phim ở đây
 });
 
 app.get("/api/getGenres", (req, res) => {

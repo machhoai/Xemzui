@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import MovieList from './MovieList';  // Import MovieList
-import { fetchGetGenres } from '../services/MoviesApi'; // Import API function
+import MovieList from './MovieList';
+import { fetchGetGenres } from '../services/MoviesApi';
+import { useSearchParams } from 'react-router-dom';
 
 const YEARS = ["2025", "2024"];
 const SORT_OPTIONS = [
   { label: "Mới nhất", value: "Mới nhất" },
   { label: "Cũ nhất", value: "Cũ nhất" },
-  { label: "Tên A-Z", value: "Tên A-Z" },
+  { label: "A-Z", value: "A-Z" },
   { label: "Tên Z-A", value: "Tên Z-A" }
 ];
 
 const MovieFilter = () => {
-  const [selectedGenres, setSelectedGenres] = useState([]);
-  const [selectedYears, setSelectedYears] = useState([]);
-  const [selectedSort, setSelectedSort] = useState("");  // ✅ Thêm state cho sort
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedGenres, setSelectedGenres] = useState(() => searchParams.getAll('genres'));
+  const [selectedYears, setSelectedYears] = useState(() => searchParams.getAll('years'));
+  const [selectedSort, setSelectedSort] = useState(() => searchParams.get('sort') || "");
   const [genreList, setGenreList] = useState([]);
 
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const genreList = await fetchGetGenres();
-        const map = genreList.reduce((acc, genre) => {
+        const genres = await fetchGetGenres();
+        const map = genres.reduce((acc, genre) => {
           acc[genre.id] = genre.name;
           return acc;
         }, {});
@@ -33,15 +35,31 @@ const MovieFilter = () => {
     fetchGenres();
   }, []);
 
-  const toggleValue = (value, setState) => {
-    setState((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-    );
+  const updateSearchParams = (key, values) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete(key);
+    values.forEach((v) => newParams.append(key, v));
+    setSearchParams(newParams);
+  };
+
+  const toggleValue = (value, values, setState, key) => {
+    const updated = values.includes(value)
+      ? values.filter((v) => v !== value)
+      : [...values, value];
+
+    setState(updated);
+    updateSearchParams(key, updated);
+  };
+
+  const handleSortChange = (value) => {
+    setSelectedSort(value);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('sort', value);
+    setSearchParams(newParams);
   };
 
   return (
     <div className="mx-auto">
-      {/* Bộ lọc */}
       <div className="bg-white dark:bg-[#2f2f2f] p-3 rounded-lg shadow-md space-y-3 w-1/3 mx-auto mb-6">
         <FilterGroup title="Thể loại">
           {Object.entries(genreList).map(([id, name]) => (
@@ -49,39 +67,40 @@ const MovieFilter = () => {
               key={id}
               label={name}
               active={selectedGenres.includes(id)}
-              onClick={() => toggleValue(id, setSelectedGenres)}
+              onClick={() => toggleValue(id, selectedGenres, setSelectedGenres, 'genres')}
             />
           ))}
         </FilterGroup>
+
         <FilterGroup title="Năm phát hành">
           {YEARS.map((year) => (
             <FilterButton
               key={year}
               label={year}
               active={selectedYears.includes(year)}
-              onClick={() => toggleValue(year, setSelectedYears)}
+              onClick={() => toggleValue(year, selectedYears, setSelectedYears, 'years')}
             />
           ))}
         </FilterGroup>
+
         <FilterGroup title="Sắp xếp">
           {SORT_OPTIONS.map((option) => (
             <FilterButton
               key={option.value}
               label={option.label}
               active={selectedSort === option.value}
-              onClick={() => setSelectedSort(option.value)} // Chọn sắp xếp
+              onClick={() => handleSortChange(option.value)}
             />
           ))}
         </FilterGroup>
       </div>
 
-      {/* Danh sách phim với bộ lọc */}
-      <div className='flex flex-col items-center'>
+      <div className="flex flex-col items-center">
         <MovieList
           searchTerm=""
           selectedGenres={selectedGenres}
           selectedYears={selectedYears}
-          sort={selectedSort} 
+          sort={selectedSort}
         />
       </div>
     </div>
