@@ -5,8 +5,6 @@ export default function PaginationWithHighlight({ handlePageChange, pages = 100 
   const [currentPage, setCurrentPage] = useState(1)
   const [highlightStyle, setHighlightStyle] = useState({})
   const wrapperRef = useRef(null)
-
-  console.log("page", pages);
   
   const updateHighlight = () => {
     const wrapper = wrapperRef.current
@@ -85,9 +83,7 @@ export default function PaginationWithHighlight({ handlePageChange, pages = 100 
         <div
           className="absolute top-0 left-0 h-full bg-blue-500 rounded text-white transition-all duration-300 z-0"
           style={highlightStyle}
-        />
-        {console.log(getVisiblePages())
-        }       
+        />   
         {getVisiblePages().length > 1 && getVisiblePages().map((page, idx) => (
         <button
             key={idx}
