@@ -14,7 +14,10 @@ import {
   Tag,
   Row,
   Col,
-  Collapse
+  Collapse,
+  Modal,
+  Result,
+  Space,
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -23,7 +26,9 @@ import {
   PictureOutlined,
   InfoCircleOutlined,
   StarOutlined,
-  SettingOutlined
+  SettingOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
 import { createMovie } from "../../../services/movieService";
 
@@ -60,6 +65,10 @@ const MovieCreate = () => {
   const [backdropPreview, setBackdropPreview] = useState("");
   const [generatedId, setGeneratedId] = useState("");
   const [selectedGenres, setSelectedGenres] = useState([]);
+  const [resultModalVisible, setResultModalVisible] = useState(false);
+  const [resultStatus, setResultStatus] = useState("success");
+  const [resultMessage, setResultMessage] = useState("");
+  const [errorDetails, setErrorDetails] = useState("");
 
   useEffect(() => {
     if (selectedGenres && selectedGenres.length > 0) {
@@ -91,11 +100,25 @@ const MovieCreate = () => {
         values.id = generatedId;
       }
 
-      await createMovie(values);
-      message.success("Movie created successfully!");
-      window.location.href = "/admin/movies";
+      const response = await createMovie(values);
+
+      // Hiển thị thông báo thành công
+      setResultStatus("success");
+      setResultMessage(`Phim "${values.title}" đã được tạo thành công!`);
+      setResultModalVisible(true);
+
+      // Vẫn hiển thị message nhỏ ở góc màn hình
+      message.success("Phim đã được tạo thành công!");
     } catch (error) {
-      message.error("Error creating movie: " + error.message);
+      // Hiển thị thông báo lỗi
+      console.error("Error creating movie:", error);
+      setResultStatus("error");
+      setResultMessage("Không thể tạo phim. Vui lòng kiểm tra lại thông tin.");
+      setErrorDetails(error.message || "Đã xảy ra lỗi không xác định");
+      setResultModalVisible(true);
+
+      // Vẫn hiển thị message nhỏ ở góc màn hình
+      message.error("Lỗi khi tạo phim: " + error.message);
     } finally {
       setSubmitting(false);
     }
@@ -105,6 +128,14 @@ const MovieCreate = () => {
     window.location.href = "/admin/movies";
   };
 
+  const handleModalClose = () => {
+    setResultModalVisible(false);
+    if (resultStatus === "success") {
+      // Nếu thành công thì chuyển về trang danh sách phim
+      window.location.href = "/admin/movies";
+    }
+  };
+
   const renderGenreTags = () => {
     return selectedGenres.map((genreId) => (
       <Tag key={genreId} color="blue" className="mb-2">
@@ -112,6 +143,89 @@ const MovieCreate = () => {
       </Tag>
     ));
   };
+
+  const ResultModal = () => (
+    <Modal
+      open={resultModalVisible}
+      footer={null}
+      onCancel={handleModalClose}
+      width={500}
+      className="result-modal"
+      closable={false}
+    >
+      <Result
+        status={resultStatus}
+        icon={
+          resultStatus === "success" ? (
+            <CheckCircleOutlined className="text-green-500 text-5xl" />
+          ) : (
+            <CloseCircleOutlined className="text-red-500 text-5xl" />
+          )
+        }
+        title={
+          <div
+            className={`text-xl font-medium ${
+              resultStatus === "success" ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {resultStatus === "success"
+              ? "Tạo phim thành công!"
+              : "Tạo phim thất bại!"}
+          </div>
+        }
+        subTitle={<p className="text-gray-600">{resultMessage}</p>}
+        extra={
+          <div className="mt-4">
+            {resultStatus === "error" && errorDetails && (
+              <Alert
+                message="Chi tiết lỗi"
+                description={errorDetails}
+                type="error"
+                className="mb-4 text-left"
+                showIcon
+              />
+            )}
+            <Space>
+              {resultStatus === "success" ? (
+                <>
+                  <Button
+                    type="primary"
+                    className="bg-green-500 hover:bg-green-600 border-none"
+                    onClick={handleModalClose}
+                  >
+                    Quay lại danh sách phim
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setResultModalVisible(false);
+                      form.resetFields();
+                      setPosterPreview("");
+                      setBackdropPreview("");
+                      setSelectedGenres([]);
+                      setGeneratedId("");
+                    }}
+                  >
+                    Tạo phim mới
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    type="primary"
+                    className="bg-blue-500 hover:bg-blue-600 border-none"
+                    onClick={() => setResultModalVisible(false)}
+                  >
+                    Tiếp tục chỉnh sửa
+                  </Button>
+                  <Button onClick={handleBack}>Quay lại danh sách phim</Button>
+                </>
+              )}
+            </Space>
+          </div>
+        }
+      />
+    </Modal>
+  );
 
   return (
     <div className="bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen px-4 py-8 text-white">
@@ -148,7 +262,7 @@ const MovieCreate = () => {
 
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Collapse
-            defaultActiveKey={['basic', 'media', 'details']}
+            defaultActiveKey={["basic", "media", "details"]}
             ghost
             className="bg-transparent"
           >
@@ -156,7 +270,9 @@ const MovieCreate = () => {
               header={
                 <div className="flex items-center">
                   <InfoCircleOutlined className="!mr-2 !text-blue-400 " />
-                  <span className="text-lg font-medium text-white">Basic Information</span>
+                  <span className="text-lg font-medium text-white">
+                    Basic Information
+                  </span>
                 </div>
               }
               key="basic"
@@ -179,7 +295,10 @@ const MovieCreate = () => {
                     label={<span className="text-white">Original Title</span>}
                     name="original_title"
                     rules={[
-                      { required: true, message: "Please enter original title!" },
+                      {
+                        required: true,
+                        message: "Please enter original title!",
+                      },
                     ]}
                   >
                     <Input
@@ -212,7 +331,9 @@ const MovieCreate = () => {
                   </Form.Item>
 
                   <Form.Item
-                    label={<span className="text-white">Original Language</span>}
+                    label={
+                      <span className="text-white">Original Language</span>
+                    }
                     name="original_language"
                   >
                     <Select
@@ -399,7 +520,9 @@ const MovieCreate = () => {
                               shape="round"
                               icon={<UploadOutlined />}
                               onClick={() =>
-                                document.getElementById("backdrop-upload").click()
+                                document
+                                  .getElementById("backdrop-upload")
+                                  .click()
                               }
                             >
                               Change Image
@@ -436,7 +559,9 @@ const MovieCreate = () => {
               header={
                 <div className="flex items-center">
                   <StarOutlined className="!mr-2 !text-blue-400" />
-                  <span className="text-lg font-medium text-white">Ratings & Stats</span>
+                  <span className="text-lg font-medium text-white">
+                    Ratings & Stats
+                  </span>
                 </div>
               }
               key="ratings"
@@ -491,7 +616,9 @@ const MovieCreate = () => {
               header={
                 <div className="flex items-center">
                   <SettingOutlined className="!mr-2 !text-blue-400" />
-                  <span className="text-lg font-medium text-white">Additional Settings</span>
+                  <span className="text-lg font-medium text-white">
+                    Additional Settings
+                  </span>
                 </div>
               }
               key="settings"
@@ -552,6 +679,9 @@ const MovieCreate = () => {
             </Button>
           </div>
         </Form>
+
+        {/* Modal kết quả */}
+        <ResultModal />
       </div>
     </div>
   );

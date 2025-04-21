@@ -119,8 +119,7 @@ const MovieManagement = () => {
             alt="Movie Poster"
             className="w-16 h-24 object-cover rounded-lg shadow-md transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-30 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <EyeOutlined className="text-white text-xl" />
+          <div className="absolute inset-0  bg-opacity-30 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           </div>
         </div>
       ),
@@ -215,11 +214,25 @@ const MovieManagement = () => {
               },
               {
                 key: 'delete',
-                label: 'Delete',
-                icon: <DeleteOutlined />,
+                label: (
+                  <Popconfirm
+                    title="Xóa phim này?"
+                    description="Bạn có chắc chắn muốn xóa phim này không?"
+                    onConfirm={() => handleDelete(record)}
+                    okText="Có, xóa phim"
+                    cancelText="Không"
+                    okButtonProps={{
+                      className: "!bg-red-500 !hover:bg-red-600"
+                    }}
+                  >
+                    <div className="flex items-center">
+                      <DeleteOutlined className="mr-2" />
+                      <span>Delete</span>
+                    </div>
+                  </Popconfirm>
+                ),
                 danger: true,
-                onClick: () => handleDelete(record)
-              },
+              } 
             ],
           }}
           trigger={['click']}
