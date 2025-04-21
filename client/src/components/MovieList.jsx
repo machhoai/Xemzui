@@ -51,8 +51,6 @@ export default function MovieList({ searchTerm, selectedGenres, selectedYears, s
       }
   
       const data = await response.json();
-      console.log("data", data);
-      
 
       if (data.totalPages >= 0) {
         setTotalPages(data.totalPages); // Cập nhật tổng số trang

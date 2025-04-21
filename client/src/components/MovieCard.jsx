@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import star_icon from "../assets/icons/star.png";
+import { Link } from "react-router-dom"
 
 export default function MovieCard({ movie }) {
   const navigate = useNavigate();
@@ -22,9 +23,6 @@ export default function MovieCard({ movie }) {
       ? movie.genres.join(" - ")
       : "Unknown genres";
 
-  const handleCardClick = () => {
-    navigate(`/movie/${movie.id}`);
-  };
 
   const handleHeartClick = (e) => {
     e.stopPropagation();
@@ -33,35 +31,34 @@ export default function MovieCard({ movie }) {
   };
 
   return (
-    <div
-      className="movie-card max-w-60 rounded-lg overflow-hidden relative cursor-pointer hover:scale-105 transition-transform"
-      onClick={handleCardClick}
-    >
-      <div className="top w-full h-80 rounded-lg overflow-hidden relative">
-        <img src={posterUrl} alt={title} className="h-full w-full object-cover" />
+    <Link to={`/movie/${movie.id}`}>
+      <div className="movie-card max-w-60 rounded-lg overflow-hidden relative cursor-pointer hover:scale-105 transition-transform">
+        <div className="top w-full h-80 rounded-lg overflow-hidden relative">
+          <img src={posterUrl} alt={title} className="h-full w-full object-cover" />
 
-        <span className="absolute top-2 left-2 h-5 px-2 py-1 bg-black/50 rounded-full text-white text-xs font-semibold flex items-center gap-1">
-          <img src={star_icon} alt="Rating" className="h-full" />
-          <p>{rating}</p>
-        </span>
+          <span className="absolute top-2 left-2 h-5 px-2 py-1 bg-black/50 rounded-full text-white text-xs font-semibold flex items-center gap-1">
+            <img src={star_icon} alt="Rating" className="h-full" />
+            <p>{rating}</p>
+          </span>
 
-        <span
-          className="absolute top-2 right-2 z-30 cursor-pointer"
-          onClick={handleHeartClick}
-        >
-          <HeartIcon className="size-6 text-red-500" isFilled={isLiked} />
-        </span>
+          <span
+            className="absolute top-2 right-2 z-30 cursor-pointer"
+            onClick={handleHeartClick}
+          >
+            <HeartIcon className="size-6 text-red-500" isFilled={isLiked} />
+          </span>
+        </div>
+
+        <div className="bottom">
+          <p className="mt-2 movie-title text-xl text-white font-semibold truncate whitespace-nowrap overflow-hidden">
+            {title}
+          </p>
+          <span className="mt-1 flex items-center gap-2 text-sm text-white w-full font-regular">
+            <p className="truncate whitespace-nowrap overflow-hidden">{genres}</p>
+          </span>
+        </div>
       </div>
-
-      <div className="bottom">
-        <p className="mt-2 movie-title text-xl text-white font-semibold truncate whitespace-nowrap overflow-hidden">
-          {title}
-        </p>
-        <span className="mt-1 flex items-center gap-2 text-sm text-white w-full font-regular">
-          <p className="truncate whitespace-nowrap overflow-hidden">{genres}</p>
-        </span>
-      </div>
-    </div>
+    </Link>
   );
 }
 
