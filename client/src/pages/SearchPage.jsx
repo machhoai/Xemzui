@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MovieList from '../components/MovieList'; // Import MovieList
-import MovieFilter from '../components/MovieFilter'; // Import MovieFilter
 
 const SearchPage = () => {
   const { searchTerm } = useParams();
@@ -31,28 +30,6 @@ const SearchPage = () => {
               Kết quả tìm kiếm "{searchTerm}"
             </h3>
           </div>
-
-          {/* Nút bộ lọc */}
-          <div className="text-right mb-4">
-            <button
-              onClick={toggleFilter}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
-            >
-              {showFilter ? 'Ẩn Bộ Lọc' : 'Hiển Thị Bộ Lọc'}
-            </button>
-          </div>
-
-          {/* Hiển thị bộ lọc nếu showFilter là true */}
-          {showFilter && (
-            <MovieFilter
-              selectedGenres={selectedGenres}
-              setSelectedGenres={setSelectedGenres}
-              selectedYears={selectedYears}
-              setSelectedYears={setSelectedYears}
-              sort={sort}
-              setSort={setSort}
-            />
-          )}
 
           {/* Danh sách phim */}
           <MovieList
