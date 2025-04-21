@@ -81,11 +81,14 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
           {showDropdown && searchResults.length > 0 && (
             <div className="absolute top-full left-0 mt-2 w-full bg-white text-black rounded shadow-lg z-50 max-h-80 overflow-y-auto">
               {searchResults.map((movie) => (
-                <Link
-                  to={`/search/${encodeURIComponent(movie.title)}`}
+                  <Link
+                  to={`/movie/${movie.id}`}
                   key={movie._id}
                   className="block px-4 py-2 hover:bg-gray-100 text-sm"
-                  onClick={() => setShowDropdown(false)}
+                  onClick={() => {
+                    setShowDropdown(false);
+                    setSearchTerm(''); 
+                  }}
                 >
                   {movie.title}
                 </Link>
