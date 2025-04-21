@@ -19,9 +19,9 @@ import MovieDetail from "../pages/MovieDetail";
 import Footer from "../components/Footer";
 import ProfilePage from "../pages/ProfilePage";
 import ResetPasswordPage from "../pages/ResetPassword";
- import SearchPage from "../pages/SearchPage";
- import MovieCreate from "../components/admin/movies/MovieCreate";
-import {OrbitProgress} from "react-loading-indicators";
+import SearchPage from "../pages/SearchPage";
+import MovieCreate from "../components/admin/movies/MovieCreate";
+import { OrbitProgress } from "react-loading-indicators";
 import { useLoading } from "../contexts/LoadingContext";
 import Sidebar from "../components/admin/layout/Sidebar";
 import DashboardAdmin from "../pages/admin/movies/DashboardAdmin";
@@ -40,13 +40,17 @@ const AppRouter = () => {
         method: "GET",
         credentials: "include",
       })
-        .then(async(response) => {
-          if (response.status === 401) { //access token hết hạn
-            console.log("checkLoginStatus: lỗi 401 tôi đang ở đây yêu cầu đăng nhập lại");
-            await refreshAccessToken(() => { checkLoginStatus() }, setIsLoggedIn);
+        .then(async (response) => {
+          if (response.status === 401) {
+            //access token hết hạn
+            console.log(
+              "checkLoginStatus: lỗi 401 tôi đang ở đây yêu cầu đăng nhập lại"
+            );
+            await refreshAccessToken(() => {
+              checkLoginStatus();
+            }, setIsLoggedIn);
             return;
-          }
-          else if (!response.ok) {
+          } else if (!response.ok) {
             const message = await response.json();
             window.alert(message.message);
             return;
@@ -74,22 +78,26 @@ const AppRouter = () => {
 
   // useEffect(() => {
   //   setLoading(true);
-  
+
   //   // giả sử sau 3s nếu chưa tắt thì auto tắt (để tránh kẹt)
   //   const timeout = setTimeout(() => {
   //     setLoading(false);
   //   }, 3000);
-  
+
   //   return () => clearTimeout(timeout);
   // }, [location.pathname]);
 
   //dừng xóa cái cái này nha :)))
   // loading chờ kiểm tra phiên đăng nhập và role người dùng
-  if(isLoading) {
+  if (isLoading) {
     return (
       <motion.div
-        initial={{opacity: 1, display: "block", zIndex: 1000000 }}
-        animate={isLoading?{opacity:0, display: "none", zIndex: 1000000 }:{opacity: 1, display: "block", zIndex: 1000000 }}
+        initial={{ opacity: 1, display: "block", zIndex: 1000000 }}
+        animate={
+          isLoading
+            ? { opacity: 0, display: "none", zIndex: 1000000 }
+            : { opacity: 1, display: "block", zIndex: 1000000 }
+        }
         transition={{
           delay: 2,
           duration: 0.8,
@@ -98,16 +106,16 @@ const AppRouter = () => {
         className="fixed overflow-hidden inset-0 w-screen h-screen"
       >
         <motion.div
-          initial={{opacity: 0}}
-          animate={{opacity:1}}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{
             delay: 4,
             duration: 0.5,
             ease: "easeInOut",
           }}
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-20 z-1000000 "
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-20 z-1000000 "
         >
-          <OrbitProgress color="#8391a7" size="small" text="" textColor=""/>
+          <OrbitProgress color="#8391a7" size="small" text="" textColor="" />
         </motion.div>
         <WelcomeLoad />
       </motion.div>
@@ -117,8 +125,12 @@ const AppRouter = () => {
   return (
     <>
       <motion.div
-        initial={{opacity: 1, display: "block", zIndex: 1000000 }}
-        animate={!isLoading?{opacity:0, display: "none", zIndex: 1000000 }:{opacity: 1, display: "block", zIndex: 1000000 }}
+        initial={{ opacity: 1, display: "block", zIndex: 1000000 }}
+        animate={
+          !isLoading
+            ? { opacity: 0, display: "none", zIndex: 1000000 }
+            : { opacity: 1, display: "block", zIndex: 1000000 }
+        }
         transition={{
           delay: 2,
           duration: 0.8,
@@ -127,22 +139,22 @@ const AppRouter = () => {
         className="fixed overflow-hidden inset-0 w-screen h-screen"
       >
         <motion.div
-          initial={{opacity: 0}}
-          animate={{opacity:1}}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{
             delay: 4,
             duration: 0.5,
             ease: "easeInOut",
           }}
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-20 z-1000000 "
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-20 z-1000000 "
         >
-          <OrbitProgress color="#8391a7" size="small" text="" textColor=""/>
+          <OrbitProgress color="#8391a7" size="small" text="" textColor="" />
         </motion.div>
         <WelcomeLoad />
       </motion.div>
 
       {isAdminRoute ? (
-        isAdmin && <Sidebar /> //navbar admin
+        isAdmin && <Sidebar setIsLoggedIn={setIsLoggedIn} /> //navbar admin
       ) : (
         <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} /> //navbar user
       )}
@@ -160,7 +172,15 @@ const AppRouter = () => {
           }
         />
         {!isLoggedIn && (
-          <Route path="/Login" element={ <LoginPage onLogin={() => setIsLoggedIn(true)} setIsAdmin={setIsAdmin} /> } />
+          <Route
+            path="/Login"
+            element={
+              <LoginPage
+                onLogin={() => setIsLoggedIn(true)}
+                setIsAdmin={setIsAdmin}
+              />
+            }
+          />
         )}
         {/* Redirect nếu người dùng đã đăng nhập */}
         {isLoggedIn && (
@@ -193,7 +213,10 @@ const AppRouter = () => {
           }
         />
         {isLoggedIn && (
-          <Route path="/Profile" element={ <ProfilePage setIsLoggedIn={setIsLoggedIn} />} />
+          <Route
+            path="/Profile"
+            element={<ProfilePage setIsLoggedIn={setIsLoggedIn} />}
+          />
         )}
         {/* Redirect nếu người dùng chưa đăng nhập */}
         {!isLoggedIn && (
@@ -210,14 +233,14 @@ const AppRouter = () => {
             </>
           }
         />
-        <Route 
-          path="/search/:searchTerm" 
+        <Route
+          path="/search/:searchTerm"
           element={
-             <>
+            <>
               <SearchPage />
               <Footer />
             </>
-          } 
+          }
         />
         {/* Admin routes */}
         {isAdmin && (

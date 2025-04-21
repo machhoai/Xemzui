@@ -1,27 +1,34 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu } from "antd";
+import { Menu, Button, Tooltip } from "antd";
 import {
   HomeOutlined,
   DatabaseOutlined,
   UserOutlined,
-  CommentOutlined,
-  StarOutlined,
+  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  PlusOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
+import { HandlerUserLogout } from "../../../services/HandlerUserService";
 
-const Sidebar = () => {
+const Sidebar = ({ setIsLoggedIn }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [activeKey, setActiveKey] = useState("1");
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
 
+  const handleLogout = () => {
+    HandlerUserLogout({ setIsLoggedIn });
+  };
+
   return (
     <div
       className={`
-        bg-dark-primary 
+        bg-gray-900 
         text-white 
         h-screen 
         fixed 
@@ -30,66 +37,92 @@ const Sidebar = () => {
         transition-all 
         duration-300 
         ${collapsed ? "w-20" : "w-64"}
-        shadow-lg
-        flex 
+        flex
         flex-col
+        z-10
+        shadow-xl
       `}
     >
       {/* Sidebar Header */}
-      <div
-        className="
-          flex 
-          items-center 
-          justify-between 
-          p-4 
-          border-b 
-          border-dark-secondary
-        "
-      >
+      <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {!collapsed && (
-          <div className="flex items-center">
-            {/* <img
-              src="/api/placeholder/40/40"
-              alt=""
-              className="w-10 h-10 mr-3 rounded-full"
-            /> */}
-            <span className="font-bold text-lg">XemZui</span>
-          </div>
+          <Link to="/admin" className="flex items-center">
+            <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center mr-2">
+              <span className="font-bold text-white">XZ</span>
+            </div>
+            <span className="font-bold text-lg text-white">XemZui</span>
+          </Link>
         )}
-        <button
+        <Button
+          type="text"
+          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={toggleCollapsed}
           className="
-            hover:bg-dark-secondary 
-            p-2 
-            rounded-full 
-            text-white 
-            focus:outline-none
+            !text-gray-400 hover:!text-white
+            !transition-all !duration-200
+            hover:!bg-gray-800
+            !rounded-lg
+            !w-10 !h-10
+            !flex !items-center !justify-center
           "
-        >
-          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        </button>
+        />
+      </div>
+
+      {/* User Profile */}
+      <div className="p-4 flex items-center justify-between border-b border-gray-700 bg-gray-800">
+        <div className="flex items-center">
+          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white">
+            <UserOutlined style={{ fontSize: "18px" }} />
+          </div>
+          {!collapsed && (
+            <div className="ml-3 overflow-hidden">
+              <div className="text-xs text-gray-400 truncate">Admin</div>
+              <div className="font-medium text-white truncate">Quang Tuoi</div>
+            </div>
+          )}
+        </div>
+        <Tooltip title="Logout" placement="right">
+          <Button
+            type="text"
+            icon={<LogoutOutlined />}
+            onClick={handleLogout}
+            className="
+              !text-gray-400 hover:!text-red-500 
+              !transition-all !duration-200
+              hover:!bg-gray-700
+              !rounded-full
+              !w-10 !h-10
+              !flex !items-center !justify-center
+            "
+          />
+        </Tooltip>
       </div>
 
       {/* Navigation Menu */}
       <Menu
-        defaultSelectedKeys={["2"]}
+        selectedKeys={[activeKey]}
         mode="inline"
         theme="dark"
         inlineCollapsed={collapsed}
         className="
-          bg-dark-primary 
-          text-white 
+          bg-gray-900 
           border-r-0 
           flex-grow
+          [&_.ant-menu-item]:!mx-2
+          [&_.ant-menu-item]:!rounded-lg
+          [&_.ant-menu-item]:!h-10
+          [&_.ant-menu-item]:!flex
+          [&_.ant-menu-item]:!items-center
         "
       >
         <Menu.Item
           key="1"
           icon={<HomeOutlined />}
+          onClick={() => setActiveKey("1")}
           className="
-            hover:bg-dark-secondary 
-            text-white 
-            hover:text-white
+            !text-gray-400 hover:!text-white
+            hover:!bg-gray-800
+            !transition-all
           "
         >
           <Link to="/admin">Dashboard</Link>
@@ -97,22 +130,23 @@ const Sidebar = () => {
         <Menu.Item
           key="2"
           icon={<DatabaseOutlined />}
+          onClick={() => setActiveKey("2")}
           className="
-            bg-dark-secondary 
-            text-white
-            hover:bg-dark-secondary 
-            hover:text-white
+            !text-gray-400 hover:!text-white
+            hover:!bg-gray-800
+            !transition-all
           "
         >
           <Link to="/admin/movies">Catalog</Link>
         </Menu.Item>
         <Menu.Item
           key="3"
-          icon={<DatabaseOutlined />}
+          icon={<PlusOutlined />}
+          onClick={() => setActiveKey("3")}
           className="
-            hover:bg-dark-secondary 
-            text-white 
-            hover:text-white
+            !text-gray-400 hover:!text-white
+            hover:!bg-gray-800
+            !transition-all
           "
         >
           <Link to="/admin/movies/create">Add Movie</Link>
@@ -120,32 +154,30 @@ const Sidebar = () => {
         <Menu.Item
           key="4"
           icon={<UserOutlined />}
+          onClick={() => setActiveKey("4")}
           className="
-            hover:bg-dark-secondary 
-            text-white 
-            hover:text-white
+            !text-gray-400 hover:!text-white
+            hover:!bg-gray-800
+            !transition-all
           "
         >
-          Users
+          <Link to="/admin/users">Users</Link>
         </Menu.Item>
       </Menu>
 
       {/* Footer */}
-      <div
-        className="
-          p-4 
-          border-t 
-          border-dark-secondary 
-          cursor-pointer 
-          hover:bg-dark-secondary
-        "
-      >
-        <div className="flex items-center">
-          <Link to="/" className="flex items-center">
-            <span className="mr-4">↩</span>
-            {!collapsed && <span>Back to XemZui</span>}
-          </Link>
-        </div>
+      <div className="p-4 border-t border-gray-700">
+        <Link
+          to="/"
+          className="
+            flex items-center 
+            text-gray-400 hover:text-white
+            transition-colors duration-200
+          "
+        >
+          <ArrowLeftOutlined className="mr-2" />
+          {!collapsed && <span>Back to Main Site</span>}
+        </Link>
       </div>
     </div>
   );
