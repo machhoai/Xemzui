@@ -40,9 +40,15 @@ const AppRouter = () => {
         method: "GET",
         credentials: "include",
       })
-        .then((response) => {
+        .then(async(response) => {
           if (response.status === 401) { //access token hết hạn
-            refreshAccessToken(() => { checkLoginStatus() }, setIsLoggedIn);
+            console.log("checkLoginStatus: lỗi 401 tôi đang ở đây yêu cầu đăng nhập lại");
+            await refreshAccessToken(() => { checkLoginStatus() }, setIsLoggedIn);
+            return;
+          }
+          else if (!response.ok) {
+            const message = await response.json();
+            window.alert(message.message);
             return;
           }
           return response.json();
@@ -52,9 +58,7 @@ const AppRouter = () => {
             setLoading(false);
             return;
           }
-
           setIsLoggedIn(true);
-
           if (data.isAdmin) {
             console.log("isAdmin:", data.isAdmin);
             setIsAdmin(true);
@@ -68,16 +72,47 @@ const AppRouter = () => {
     checkLoginStatus();
   }, []);
 
-  useEffect(() => {
-    setLoading(true);
+  // useEffect(() => {
+  //   setLoading(true);
   
-    // giả sử sau 3s nếu chưa tắt thì auto tắt (để tránh kẹt)
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+  //   // giả sử sau 3s nếu chưa tắt thì auto tắt (để tránh kẹt)
+  //   const timeout = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 3000);
   
-    return () => clearTimeout(timeout);
-  }, [location.pathname]);
+  //   return () => clearTimeout(timeout);
+  // }, [location.pathname]);
+
+  //dừng xóa cái cái này nha :)))
+  // loading chờ kiểm tra phiên đăng nhập và role người dùng
+  if(isLoading) {
+    return (
+      <motion.div
+        initial={{opacity: 1, display: "block", zIndex: 1000000 }}
+        animate={isLoading?{opacity:0, display: "none", zIndex: 1000000 }:{opacity: 1, display: "block", zIndex: 1000000 }}
+        transition={{
+          delay: 2,
+          duration: 0.8,
+          ease: "easeInOut",
+        }}
+        className="fixed overflow-hidden inset-0 w-screen h-screen"
+      >
+        <motion.div
+          initial={{opacity: 0}}
+          animate={{opacity:1}}
+          transition={{
+            delay: 4,
+            duration: 0.5,
+            ease: "easeInOut",
+          }}
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-20 z-1000000 "
+        >
+          <OrbitProgress color="#8391a7" size="small" text="" textColor=""/>
+        </motion.div>
+        <WelcomeLoad />
+      </motion.div>
+    );
+  }
 
   return (
     <>
@@ -124,17 +159,15 @@ const AppRouter = () => {
             </>
           }
         />
-        <Route
-          path="/Login"
-          element={
-            <>
-              <LoginPage
-                onLogin={() => setIsLoggedIn(true)}
-                setIsAdmin={setIsAdmin}
-              />
-            </>
-          }
-        />
+        {!isLoggedIn && (
+          <Route path="/Login" element={ <LoginPage onLogin={() => setIsLoggedIn(true)} setIsAdmin={setIsAdmin} /> } />
+        )}
+        {/* Redirect nếu người dùng đã đăng nhập */}
+        {isLoggedIn && (
+          <>
+            <Route path="/Login" element={<Navigate to="/" replace />} />
+          </>
+        )}
         <Route
           path="/SignUp"
           element={
@@ -160,14 +193,7 @@ const AppRouter = () => {
           }
         />
         {isLoggedIn && (
-          <Route
-            path="/Profile"
-            element={
-              <>
-                <ProfilePage setIsLoggedIn={setIsLoggedIn} />
-              </>
-            }
-          />
+          <Route path="/Profile" element={ <ProfilePage setIsLoggedIn={setIsLoggedIn} />} />
         )}
         {/* Redirect nếu người dùng chưa đăng nhập */}
         {!isLoggedIn && (

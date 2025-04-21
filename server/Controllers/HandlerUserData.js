@@ -2,6 +2,7 @@ const { UsersCollection } = require("../config/ConnectDB");
 const { ObjectId } = require('mongodb');
 const nodemailer = require('nodemailer');
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
 const { createResetPasswordToken } = require("../middleware/Auth.js");
 
 //Lấy thông tin người dùng từ token đã xác thực
@@ -125,4 +126,35 @@ async function HandlerSendResetPasswordLink(req, res) {
         res.status(500).json({ message: "Lỗi máy chủ" });
     }
 }
-module.exports = { HandlerGetUserInfor, HandlerUpdateUserInfor, HandlerChangePassword, HandlerSendResetPasswordLink }
+
+// Xử lý reset password
+async function HandlerResetPass(req, res) {
+    const { token, newPassword } = req.body;
+    console.log("HandlerResetPass - body: ", req.body);
+    try {
+        // Giải mã token để lấy thông tin người dùng
+        const decoded = jwt.verify(token, process.env.SECRET_ACCESS);
+        const userId = decoded.id;
+        const email = decoded.email;
+
+        // Tìm người dùng trong Collection
+        const user = await UsersCollection.findOne({ _id: new ObjectId(userId), email: email });
+        if (!user) {
+            return res.status(404).json({ message: "Người dùng không tồn tại" });
+        }
+
+        // Mã hóa mật khẩu mới
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+        // Cập nhật mật khẩu mới vào Collection
+        await UsersCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: { password: hashedNewPassword } }
+        );
+        res.status(200).json({ message: "Đặt lại mật khẩu thành công" });
+    } catch (error) {
+        console.error("Lỗi khi đặt lại mật khẩu:", error);
+        res.status(500).json({ message: "Lỗi máy chủ" });
+    }
+}
+module.exports = { HandlerGetUserInfor, HandlerUpdateUserInfor, HandlerChangePassword, HandlerSendResetPasswordLink, HandlerResetPass }

@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { FaLock, FaEye, FaEyeSlash, FaCheckCircle } from 'react-icons/fa';
+import { HandlerResetPassword } from '../services/HandlerUserService';
 
 const ResetPasswordPage = () => {
+  const { token } = useParams(); // Lấy token từ URL
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +32,8 @@ const ResetPasswordPage = () => {
     
     // Gửi yêu cầu reset password đến server ở đây
     console.log('Password reset to:', password);
-    setIsSubmitted(true);
+    // Gọi hàm reset password
+    HandlerResetPassword(token, password, setIsSubmitted);
   };
 
   // Password strength indicator

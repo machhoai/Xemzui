@@ -2,6 +2,7 @@ import { refreshAccessToken } from "./RefreshAccessTokenAPI";
 
 //Đăng xuất
 export function HandlerUserLogout({ setIsLoggedIn }) {
+    console.log("HandlerUserLogout: đang ở đây yêu cầu đăng xuất");
     fetch("http://localhost:8000/api/logout", {
         method: "GET",
         headers: {
@@ -12,6 +13,7 @@ export function HandlerUserLogout({ setIsLoggedIn }) {
         .then((response) => {
             if (response.status == 400) {
                 setIsLoggedIn(false);
+                console.log('Chưa đăng nhập hoặc phiên đăng nhập đã hêt')
                 window.location.href = '/login';
                 return;
             }
@@ -24,7 +26,7 @@ export function HandlerUserLogout({ setIsLoggedIn }) {
         .then((data) => {
             if (!data) return;
 
-            alert(data.message);
+            window.alert(data.message);
             setIsLoggedIn(false);
             window.location.href = '/login';
         })
@@ -90,7 +92,7 @@ export function HandlerGetUserInfo(setUserInfo, setIsLoggedIn) {
     })
         .then(async (response) => {
             if (response.status === 401) { //access token hết hạn
-                refreshAccessToken(() => { HandlerGetUserInfo(setUserInfo, setIsLoggedIn) }, setIsLoggedIn);
+                await refreshAccessToken(() => { HandlerGetUserInfo(setUserInfo, setIsLoggedIn) }, setIsLoggedIn);
                 return;
             }
             return response.json();
@@ -120,7 +122,7 @@ export function HandlerUpdateUserInfo(userInfo) {
     })
         .then(async (response) => {
             if (response.status === 401) { //access token hết hạn
-                refreshAccessToken(() => { HandlerUpdateUserInfo(userInfo) });
+                await refreshAccessToken(() => { HandlerUpdateUserInfo(userInfo) });
                 return;
             }
             else if (!response.ok) {
@@ -154,7 +156,7 @@ export function HandlerChangePassword(oldPassword, newPassword) {
     })
         .then(async (response) => {
             if (response.status === 401) { //access token hết hạn
-                refreshAccessToken(() => { HandlerChangePassword(oldPassword, newPassword) });
+                await refreshAccessToken(() => { HandlerChangePassword(oldPassword, newPassword) });
                 return;
             }
             else if (!response.ok) {
@@ -173,8 +175,8 @@ export function HandlerChangePassword(oldPassword, newPassword) {
         });
 }
 
-//reset mật khẩu 
-export function HandlerResetPassword(email) {
+//gửi link trang reset mật khẩu 
+export function HandlerSendLinkResetPassword(email) {
     fetch(`http://localhost:8000/api/sendmailtoresetpass`, {
         method: "POST",
         headers: {
@@ -195,6 +197,36 @@ export function HandlerResetPassword(email) {
         .then((data) => {
             if (!data) return;
             console.log("message:", data.message);
+        })
+        .catch((error) => {
+            console.error("Lỗi:", error);
+        });
+}
+
+//reset mật khẩu
+export function HandlerResetPassword(token, newPassword, setIsSubmitted) {
+    fetch(`http://localhost:8000/api/resetpassword`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            token,
+            newPassword,
+        }),
+    })
+        .then(async (response) => {
+            if (!response.ok) {
+                const errorData = await response.json();
+                window.alert(errorData.message || "Reset mật khẩu thất bại. Vui lòng thử lại!");
+                return;
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (!data) return;
+            console.log("message:", data.message);
+            setIsSubmitted(true);
         })
         .catch((error) => {
             console.error("Lỗi:", error);

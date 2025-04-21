@@ -141,8 +141,10 @@ const Sidebar = () => {
         "
       >
         <div className="flex items-center">
-          <span className="mr-4">↩</span>
-          {!collapsed && <span>Back to XemZui</span>}
+          <Link to="/" className="flex items-center">
+            <span className="mr-4">↩</span>
+            {!collapsed && <span>Back to XemZui</span>}
+          </Link>
         </div>
       </div>
     </div>

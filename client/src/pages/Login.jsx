@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaEye, FaEyeSlash, FaGoogle, FaFilm } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaFilm } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { HandlerUserLogin } from "../services/HandlerUserService";
 import "./css/Login.css";

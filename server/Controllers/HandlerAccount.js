@@ -36,13 +36,13 @@ async function HandlerLogin(req, res) {
       .cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: false, // true nếu dùng HTTPS
-        sameSite: "Strict",
+        sameSite: "Lax",
         maxAge: 15 * 60 * 1000,
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "Strict",
+        sameSite: "Lax",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       })
       .json({
@@ -102,12 +102,6 @@ async function HandlerSignUp(req, res) {
 }
 
 async function HandlerGetUser(req, res) {
-  const refreshToken = req.cookies.refreshToken;
-  if (!refreshToken) {
-    return res.status(401).json({ message: "refresh token không hợp lệ hoặc hết hạn" })};
-  if (!req.user) {
-    return res.status(401).json({ message: "access token không hợp lệ hoặc hết hạn" });
-  }
   res.json({
     email: req.user.email,
     isAdmin: req.user.isAdmin,
@@ -119,7 +113,7 @@ async function HandlerLogout(req, res) {
   try {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
-      return res.status(400).json({ message: "Chưa đăng nhập hoặc phiên đăng nhập đã hêt." });
+      return res.status(400).clearCookie("accessToken").json({ message: "Chưa đăng nhập hoặc phiên đăng nhập đã hêt." });
     }
     // Giải mã refresh token để lấy thông tin người dùng
     const decoded = jwt.verify(refreshToken, process.env.SECRET_REFRESH);

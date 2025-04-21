@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FaEnvelope, FaArrowLeft } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { HandlerResetPassword } from '../services/HandlerUserService';
+import { HandlerSendLinkResetPassword } from '../services/HandlerUserService';
 import './css/ForgotPass.css';
 
 const ForgotPassword = () => {
@@ -27,7 +27,7 @@ const ForgotPassword = () => {
     
     // Giả lập gửi email reset mật khẩu
     try {
-      await HandlerResetPassword(email);
+      await HandlerSendLinkResetPassword(email);
       setIsSubmitted(true);
     } catch (error) {
       console.error('Lỗi gửi email:', error);
