@@ -3,18 +3,25 @@ import MovieList from './MovieList';  // Import MovieList
 import { fetchGetGenres } from '../services/MoviesApi'; // Import API function
 
 const YEARS = ["2025", "2024"];
+const SORT_OPTIONS = [
+  { label: "Mới nhất", value: "Mới nhất" },
+  { label: "Cũ nhất", value: "Cũ nhất" },
+  { label: "Tên A-Z", value: "Tên A-Z" },
+  { label: "Tên Z-A", value: "Tên Z-A" }
+];
 
 const MovieFilter = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedYears, setSelectedYears] = useState([]);
+  const [selectedSort, setSelectedSort] = useState("");  // ✅ Thêm state cho sort
   const [genreList, setGenreList] = useState([]);
 
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const genreList = await fetchGetGenres(); // Fetch danh sách thể loại
+        const genreList = await fetchGetGenres();
         const map = genreList.reduce((acc, genre) => {
-          acc[genre.id] = genre.name; // Tạo GENRE_MAP từ genreList
+          acc[genre.id] = genre.name;
           return acc;
         }, {});
         setGenreList(map);
@@ -22,7 +29,7 @@ const MovieFilter = () => {
         console.error("Lỗi khi fetch genres:", error);
       }
     };
-  
+
     fetchGenres();
   }, []);
 
@@ -33,7 +40,7 @@ const MovieFilter = () => {
   };
 
   return (
-    <div className=" mx-auto">
+    <div className="mx-auto">
       {/* Bộ lọc */}
       <div className="bg-white dark:bg-[#2f2f2f] p-3 rounded-lg shadow-md space-y-3 w-1/3 mx-auto mb-6">
         <FilterGroup title="Thể loại">
@@ -56,13 +63,25 @@ const MovieFilter = () => {
             />
           ))}
         </FilterGroup>
+        <FilterGroup title="Sắp xếp">
+          {SORT_OPTIONS.map((option) => (
+            <FilterButton
+              key={option.value}
+              label={option.label}
+              active={selectedSort === option.value}
+              onClick={() => setSelectedSort(option.value)} // Chọn sắp xếp
+            />
+          ))}
+        </FilterGroup>
       </div>
+
       {/* Danh sách phim với bộ lọc */}
       <div className='flex flex-col items-center'>
         <MovieList
           searchTerm=""
           selectedGenres={selectedGenres}
           selectedYears={selectedYears}
+          sort={selectedSort} 
         />
       </div>
     </div>
