@@ -68,8 +68,6 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
             <span className="text-white text-xl font-semibold">XemZui</span><br />
           </div>
         </a>
-
-        {/* 🔍 Thanh tìm kiếm */}
         <div className="relative hidden md:flex items-center bg-[#1f1f1f2f] rounded-lg px-4 py-2 w-80 ml-6 focus-within:ring-2 focus-within:ring-yellow-400">
           <FaSearch className="text-white mr-2" />
           <input
@@ -84,7 +82,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
             <div className="absolute top-full left-0 mt-2 w-full bg-white text-black rounded shadow-lg z-50 max-h-80 overflow-y-auto">
               {searchResults.map((movie) => (
                 <Link
-                  to={`/phim/${movie._id}`}
+                  to={`/search/${encodeURIComponent(movie.title)}`}
                   key={movie._id}
                   className="block px-4 py-2 hover:bg-gray-100 text-sm"
                   onClick={() => setShowDropdown(false)}
