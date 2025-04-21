@@ -1,5 +1,4 @@
-@import "tailwindcss";
-
+@import 'tailwindcss';   
 body {
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox */

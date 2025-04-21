@@ -105,8 +105,7 @@ const getMovies = asyncHandler(async (req, res) => {
 
 const getGenresList = asyncHandler(async (req, res) => {
   try {
-    const genres = await GenresCollection.find({}).toArray();
-    console.log(genres);
+    const genres = await GenresCollection.find({}).toArray();;
     res.json(genres);
   } catch (error) {
     console.error(error);

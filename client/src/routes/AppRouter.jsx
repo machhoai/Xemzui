@@ -32,6 +32,7 @@ const AppRouter = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
   const { isLoading, setLoading } = useLoading();
+  const [isCheckingUser, setisCheckingUser] = useState(true); // trạng thái loading
 
   //kiểm tra phiên đăng nhập
   useEffect(() => {
@@ -55,7 +56,7 @@ const AppRouter = () => {
         })
         .then((data) => {
           if (!data) {
-            setLoading(false);
+            setisCheckingUser(false);
             return;
           }
           setIsLoggedIn(true);
@@ -63,7 +64,7 @@ const AppRouter = () => {
             console.log("isAdmin:", data.isAdmin);
             setIsAdmin(true);
           }
-          setLoading(false);
+          setisCheckingUser(false);
         })
         .catch((error) => {
           console.error("Lỗi khi lấy thông tin user:", error);
@@ -72,20 +73,11 @@ const AppRouter = () => {
     checkLoginStatus();
   }, []);
 
-  // useEffect(() => {
-  //   setLoading(true);
-  
-  //   // giả sử sau 3s nếu chưa tắt thì auto tắt (để tránh kẹt)
-  //   const timeout = setTimeout(() => {
-  //     setLoading(false);
-  //   }, 3000);
-  
-  //   return () => clearTimeout(timeout);
-  // }, [location.pathname]);
+  useEffect(() => {
+    console.log("isLoading đã đổi:", isLoading);
+  }, [isLoading]);
 
-  //dừng xóa cái cái này nha :)))
-  // loading chờ kiểm tra phiên đăng nhập và role người dùng
-  if(isLoading) {
+  if(isCheckingUser) {
     return (
       <motion.div
         initial={{opacity: 1, display: "block", zIndex: 1000000 }}
@@ -154,7 +146,7 @@ const AppRouter = () => {
           path="/"
           element={
             <>
-              {/* <Home /> */}
+              <Home />
               <Footer />
             </>
           }

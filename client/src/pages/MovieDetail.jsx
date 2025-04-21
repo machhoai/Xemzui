@@ -9,12 +9,32 @@ import { useLoading } from "../contexts/LoadingContext";
 import { motion } from "framer-motion";
 import { OrbitProgress } from "react-loading-indicators";
 import WelcomeLoad from "../components/WelcomeLoad";
+import { fetchGetGenres } from "../services/MoviesApi";
 
 
 export default function MovieDetail() {
     const movieId  = useParams().id;
     const [movie, setMovie] = useState(null);
     const { isLoading ,setLoading } = useLoading();
+    const [genreList, setGenreList] = useState([]);
+    
+    useEffect(() => {
+        const fetchGenres = async () => {
+            try {
+            const genreList = await fetchGetGenres(); // Fetch danh sách thể loại
+            const map = genreList.reduce((acc, genre) => {
+                acc[genre.id] = genre.name; // Tạo GENRE_MAP từ genreList
+                return acc;
+            }, {});
+            setGenreList(map);
+            } catch (error) {
+            console.error("Lỗi khi fetch genres:", error);
+            }
+        };
+        
+        fetchGenres();
+    }, []);
+
     useEffect(() => {
         
         const fetchData = async () => {
@@ -31,10 +51,7 @@ export default function MovieDetail() {
     
         fetchData();
     }, [movieId]);
-
-    useEffect(() => {
-        console.log("isLoading đã đổi:", isLoading);
-      }, [isLoading]);
+    
 
     return (
         <>
@@ -52,10 +69,15 @@ export default function MovieDetail() {
                                 <h1 className="title text-6xl font-semibold">{movie.title}</h1>
                             </div>
                             <div className="genres mt-6 flex items-center justify-between">
-                                <span className="genres display flex gap-2 text-sm text-white font-regular">
+                                {/* <span className="genres display flex gap-2 text-sm text-white font-regular">
                                     <span className="px-3 py-1 bg-gray-700/30 rounded-lg border-[1px] border-white">Viễn tưởng</span>
                                     <span className="px-3 py-1 bg-gray-700/30 rounded-lg border-[1px] border-white">Hành động</span>
                                     <span className="px-3 py-1 bg-gray-700/30 rounded-lg border-[1px] border-white">Phiêu Lưu</span>
+                                </span> */}
+                                <span className="genres display flex gap-2 text-sm text-white font-regular">
+                                    {movie.genre_ids.map((genre, index) => (
+                                        <span key={index} className="px-3 py-1 bg-gray-700/30 rounded-lg border-[1px] border-white">{genreList[genre]}</span>
+                                    ))}
                                 </span>
                                 <span className="share-icon flex items-center justify-center rounded-lg px-4 py-2 bg-white cursor-pointer">
                                     <ShareSocialOutline color={"#111111"} height="26px" width="26px"/>

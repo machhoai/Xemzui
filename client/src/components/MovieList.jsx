@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import MovieCard from "./MovieCard";
 import { fetchGetGenres } from "../services/MoviesApi";
 import { useLoading } from "../contexts/LoadingContext";
+import Pagination from "./Pagination";
 
 export default function MovieList({ searchTerm, selectedGenres, selectedYears, sort }) {
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState(null);
   const { setLoading } = useLoading();
   const [genreMap, setGenreMap] = useState({});
-
+  const [totalPages, setTotalPages] = useState(1); // Thêm state totalPages
+  const [totalMovies, setTotalMovies] = useState(0); // Thêm state totalMovies
   useEffect(() => {
     const fetchGenresAndMovies = async () => {
       setLoading(true);
@@ -31,7 +33,7 @@ export default function MovieList({ searchTerm, selectedGenres, selectedYears, s
     fetchGenresAndMovies(); // Gọi lại hàm khi các dependency thay đổi
   }, [searchTerm, selectedGenres, selectedYears, sort]); // Các dependency cần theo dõi
 
-  const fetchMovies = async (genreMap) => {
+  const fetchMovies = async (genreMap, page = 1, limit = 20) => {
     const filters = {
       genres: selectedGenres.join(","),
       years: selectedYears.join(","),
@@ -40,7 +42,7 @@ export default function MovieList({ searchTerm, selectedGenres, selectedYears, s
   
     try {
       const response = await fetch(
-        `http://localhost:8000/api/movies?search=${encodeURIComponent(searchTerm)}&genres=${filters.genres}&years=${filters.years}&sort=${filters.sort}`,
+        `http://localhost:8000/api/movies?search=${encodeURIComponent(searchTerm)}&genres=${filters.genres}&years=${filters.years}&sort=${filters.sort}&page=${page}&limit=${limit}`,
         { method: "GET", headers: { "Content-Type": "application/json" }, credentials: "include" }
       );
   
@@ -49,7 +51,14 @@ export default function MovieList({ searchTerm, selectedGenres, selectedYears, s
       }
   
       const data = await response.json();
+      console.log("data", data);
+      
+
+      if (data.totalPages >= 0) {
+        setTotalPages(data.totalPages); // Cập nhật tổng số trang
+      }
       if (data.movies) {
+        setTotalMovies(data.total); // Cập nhật tổng số phim
         const moviesWithGenres = data.movies.map((movie) => ({
           ...movie,
           genres: movie.genre_ids?.map((id) => genreMap[id]).filter(Boolean),
@@ -66,6 +75,13 @@ export default function MovieList({ searchTerm, selectedGenres, selectedYears, s
     }
   };
 
+  const handlePageChange = (page) => {
+    console.log("Đang chuyển trang:", page);
+    const limit = 20; // Số lượng phim trên mỗi trang
+    setLoading(true); // Bắt đầu loading khi chuyển trang
+    fetchMovies(genreMap, page,limit); // Gọi lại hàm fetchMovies với trang mới
+  }
+
   if (error) {
     return <div className="text-red-500 text-center">Lỗi: {error}</div>;
   }
@@ -76,17 +92,24 @@ export default function MovieList({ searchTerm, selectedGenres, selectedYears, s
       <div className="col-span-full text-center text-gray-500">Không có phim nào</div>
     )}
     {movies.length > 0 && (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 ">
-        {movies.length === 0 ? (
-          <div className="col-span-full text-center text-gray-500">Không có phim nào</div>
-        ) : (
-          movies.map((movie) => (
-            <div key={movie._id} className="w-full">
-              <MovieCard movie={movie} />
-            </div>
-          ))
+      <>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 ">
+          {movies.length === 0 ? (
+            <div className="col-span-full text-center text-gray-500">Không có phim nào</div>
+          ) : (
+            movies.map((movie) => (
+              <div key={movie._id} className="w-full">
+                <MovieCard movie={movie} />
+              </div>
+            ))
+          )}
+        </div>
+        {
+          totalPages > 1 && (
+            <Pagination handlePageChange = {handlePageChange} pages = {totalPages}/>
         )}
-      </div>
+        <p className="mt-2">Có {totalMovies} kết quả trùng khớp.</p>
+      </>
     ) }
     </>
   );
