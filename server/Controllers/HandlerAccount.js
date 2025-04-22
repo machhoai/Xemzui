@@ -9,8 +9,6 @@ const bcrypt = require("bcrypt");
 
 async function HandlerLogin(req, res) {
   const { email, password } = req.body;
-  console.log("HandlerLogin - phoneNumber: ", email);
-  console.log("HandlerLogin - password: ", password);
 
   try {
     // Tìm người dùng trong cơ sở dữ liệu
@@ -26,7 +24,6 @@ async function HandlerLogin(req, res) {
     }
 
     // Tạo access token và refresh token
-    console.log("HandlerLogin - user: ", user);
     const accessToken = createAccessToken(user._id.toString(), user.email, user.isAdmin);
     const refreshToken = createRefreshToken(user._id.toString(), user.email, user.isAdmin);
 

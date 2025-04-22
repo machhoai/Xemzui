@@ -1,42 +1,10 @@
-const { log } = require("console");
 const { MoviesCollection, GenresCollection } = require("../config/ConnectDB");
 const asyncHandler = require("express-async-handler");
-const {ObjectId } = require("mongodb");
 
 // ******** PUBLIC CONTROLLER ********
 
-// đẩy movie lên db
-// POST /api/movies/import
-const importMovies = asyncHandler(async (req, res) => {
-  // ở đây đảm bảo là table Movies nó rỗng nên xài delete all
-  await Movie.deleteMany({});
-  // sau đó import hết movie trong MoviesData
-  const movies = await Movie.insertMany(MoviesData);
-  res.status(201).json(movies);
-});
-
 // get all movie
 // GET /api/movies
-
-
-// get movie với id
-// GET /api/movies/:id
-const getMovieById = asyncHandler(async (req, res, movieId) => {
-    try {
-        // Convert string ID to ObjectId
-        const movie = await MoviesCollection.findOne({ id: movieId});
-
-        if (!movie) {
-          return res.status(404).json({ error: "Movie not found" });
-        }
-    
-        res.json(movie);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Internal Server Error" });
-      }
-});
-
 
 const getMovies = asyncHandler(async (req, res) => {
   try {
@@ -103,6 +71,27 @@ const getMovies = asyncHandler(async (req, res) => {
   }
 });
 
+// get movie với id
+// GET /api/movies/:id
+const getMovieById = asyncHandler(async (req, res, movieId) => {
+    try {
+        // Convert string ID to ObjectId
+        const movie = await MoviesCollection.findOne({ id: movieId});
+
+        if (!movie) {
+          return res.status(404).json({ error: "Movie not found" });
+        }
+    
+        res.json(movie);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+});
+
+
+// get genre 
+// GET /api/getGenres
 const getGenresList = asyncHandler(async (req, res) => {
   try {
     const genres = await GenresCollection.find({}).toArray();;
@@ -110,78 +99,6 @@ const getGenresList = asyncHandler(async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-
-// get top rate movie
-// GET /api/movies/rated/top
-const getTopRatedMovies = asyncHandler(async (req, res) => {
-  try {
-    const movies = await Movie.find({}).sort({ rate: -1 });
-    res.json(movies);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// get random movie
-// GET /api/movies/random/all
-const getRandomMovies = asyncHandler(async (req, res) => {
-  try {
-    const movies = await Movie.aggregate([{ $sample: { size: 8 } }]);
-    res.json(movies);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// ******** PRIVATE CONTROLLER ********
-
-// tạo review cho movie
-// POST /api/movies/:id/reviews
-const createReviewMovie = asyncHandler(async (req, res) => {
-  const { rating, comment } = req.body;
-  try {
-    const movie = await Movie.findById(req.params.id);
-    if (movie) {
-      const checkReview = movie.reviews.find(
-        (r) => r.userId.toString() === req.user._id.toString()
-      );
-      if (checkReview) {
-        res.status(400);
-        throw new Error("You already review movie");
-      }
-      // else tạo review
-      const review = {
-        userName: req.user.fullName,
-        userId: req.user._id,
-        userImage: req.user.image,
-        rating: Number(rating),
-        comment,
-      };
-      // push lên
-      movie.reviews.push(review);
-      // increment điểm review
-      movie.numberOfReviews = movie.reviews.length;
-
-      //tính rate mới
-      movie.rate =
-        movie.reviews.reduce((acc, item) => item.rating + acc, 0) /
-        movie.reviews.length;
-
-      // save movie
-      await movie.save();
-      // gửi tới client
-      res.status(201).json({
-        message: "Review successfully!",
-      });
-    } else {
-      res.status(404);
-      throw new Error("Movie not found");
-    }
-  } catch (error) {
-    res.status(400).json({ message: error.message });
   }
 });
 
@@ -373,12 +290,8 @@ const createMovie = asyncHandler(async (req, res) => {
 module.exports = {
   updateMovie,
   getGenresList,
-  importMovies,
   getMovies,
   getMovieById,
-  getTopRatedMovies,
-  getRandomMovies,
-  createReviewMovie,
   updateMovie,
   deleteMovie,
   deleteAllMovie,

@@ -1,5 +1,4 @@
 import React from "react";
-
 import MovieCreate from "../../../components/admin/movies/MovieCreate";
 
 const CreateMoviePageAdmin = () => {
