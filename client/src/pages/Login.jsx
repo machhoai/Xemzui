@@ -26,7 +26,7 @@ const LoginPage = ({ onLogin, setIsAdmin }) => {
     }
 
     // Validate password
-    if (password.length < 3) {
+    if (password.length < 8) {
       setPasswordError("Mật khẩu phải có ít nhất 8 ký tự");
       isValid = false;
     } else {
@@ -40,7 +40,7 @@ const LoginPage = ({ onLogin, setIsAdmin }) => {
 
   setTimeout(() => {
     setLoading(false);
-  }, 100); // Giả lập thời gian tải 1 giây
+  }, 100);
 
   return (
     <div className="login-container">

@@ -1,6 +1,8 @@
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 export async function fetchMovieDetail(id) {
     try {
-        const response = await fetch(`http://localhost:8000/api/get-movie-detail/${id}`,
+        const response = await fetch(`${BASE_URL}/api/get-movie-detail/${id}`,
             {
                 method: "GET",
                 headers: {
@@ -22,7 +24,7 @@ export async function fetchMovieDetail(id) {
 
 export async function fetchGetGenres() {
     try {
-        const response = await fetch(`http://localhost:8000/api/getGenres`,
+        const response = await fetch(`${BASE_URL}/api/getGenres`,
             {
                 method: "GET",
                 headers: {

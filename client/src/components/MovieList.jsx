@@ -27,11 +27,11 @@ export default function MovieList({
         }, {});
         setGenreMap(map); // Set GENRE_MAP vào state
         await fetchMovies(map); // Gọi fetchMovies với genreMap mới
+        setLoading(false);
       } catch (err) {
         console.error(err);
         setError("Không thể load thể loại/phim");
       } finally {
-        setLoading(false); // Chỉ gọi setLoading ở đây
       }
     };
 
@@ -47,7 +47,7 @@ export default function MovieList({
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/movies?search=${encodeURIComponent(
+        `https://xemzui-production.up.railway.app/api/movies?search=${encodeURIComponent(
           searchTerm
         )}&genres=${filters.genres}&years=${filters.years}&sort=${
           filters.sort

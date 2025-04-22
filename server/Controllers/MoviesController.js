@@ -105,54 +105,84 @@ const getGenresList = asyncHandler(async (req, res) => {
 // ******** ADMIN CONTROLLER ********
 
 // update movie
-// POST /api/movies/:id
+// Put /api/movies/:id
+// Update Movie Controller
 const updateMovie = asyncHandler(async (req, res) => {
   try {
+    const { id } = req.params;
     const {
-      name,
-      desc,
-      titleImage,
-      image,
-      category,
-      language,
-      year,
-      time,
+      adult,
+      backdrop_path,
+      genre_ids,
+      original_language,
+      original_title,
+      overview,
+      popularity,
+      poster_path,
+      release_date,
+      title,
       video,
-      rate,
-      director,
-      boxOffice,
-      numberOfReviews,
-      casts,
+      vote_average,
+      vote_count,
     } = req.body;
-    const movie = await Movie.findById(req.params.id);
 
-    if (movie) {
-      //logic update
-      movie.name = name || movie.name;
-      movie.desc = desc || movie.desc;
-      movie.titleImage = titleImage || movie.titleImage;
-      movie.image = image || movie.image;
-      movie.category = category || movie.category;
-      movie.language = language || movie.language;
-      movie.year = year || movie.year;
-      movie.time = time || movie.time;
-      movie.video = video || movie.video;
-      movie.rate = rate || movie.rate;
-      movie.director = director || movie.director;
-      movie.boxOffice = boxOffice || movie.boxOffice;
-      movie.numberOfReviews = numberOfReviews || movie.numberOfReviews;
-      movie.casts = casts || movie.casts;
+    console.log("Update movie data:", req.body);
+    
 
-      // save vô db
-      const updateMovie = await movie.save();
-      // gửi tới client
-      res.status(201).json(updateMovie);
-    } else {
-      res.status(404);
-      throw new Error("Movie not found");
+    // Validate required fields
+    if (!id || !title || !original_title) {
+      res.status(400);
+      throw new Error("Missing required fields");
     }
+
+    // Check if movie exists and belongs to the user
+    const existingMovie = await MoviesCollection.findOne({
+      id: id,
+      userId: req.user._id
+    });
+
+    if (!existingMovie) {
+      res.status(404);
+      throw new Error("Movie not found or unauthorized");
+    }
+
+    // Prepare update object
+    const updateData = {
+      adult: adult || existingMovie.adult,
+      backdrop_path: backdrop_path || existingMovie.backdrop_path,
+      genre_ids: genre_ids || existingMovie.genre_ids,
+      original_language: original_language || existingMovie.original_language,
+      original_title: original_title || existingMovie.original_title,
+      overview: overview || existingMovie.overview,
+      popularity: popularity || existingMovie.popularity,
+      poster_path: poster_path || existingMovie.poster_path,
+      release_date: release_date || existingMovie.release_date,
+      title: title || existingMovie.title,
+      video: video || existingMovie.video,
+      vote_average: vote_average || existingMovie.vote_average,
+      vote_count: vote_count || existingMovie.vote_count,
+      updatedAt: new Date()
+    };
+
+    // Perform the update
+    const result = await MoviesCollection.updateOne(
+      { id: id, userId: req.user._id },
+      { $set: updateData }
+    );
+
+    if (result.modifiedCount === 0) {
+      res.status(400);
+      throw new Error("No changes made or update failed");
+    }
+
+    // Return the updated movie
+    const updatedMovie = await MoviesCollection.findOne({ id: id });
+    res.status(200).json(updatedMovie);
   } catch (error) {
-    res.status(401).json({ message: error.message });
+    console.error("Update movie error:", error);
+    res.status(error.statusCode || 500).json({ 
+      message: error.message || "Internal server error" 
+    });
   }
 });
 
@@ -258,6 +288,7 @@ const createMovie = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
+  updateMovie,
   getGenresList,
   getMovies,
   getMovieById,

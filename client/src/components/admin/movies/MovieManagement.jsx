@@ -9,30 +9,9 @@ import {
   SearchOutlined,
   MoreOutlined
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { deleteMovie } from "../../../services/movieService";
-
-const GENRE_MAP = {
-  28: "Action",
-  12: "Adventure",
-  16: "Animation",
-  35: "Comedy",
-  80: "Crime",
-  99: "Documentary",
-  18: "Drama",
-  10751: "Family",
-  14: "Fantasy",
-  36: "History",
-  27: "Horror",
-  10402: "Music",
-  9648: "Mystery",
-  10749: "Romance",
-  878: "Science Fiction",
-  10770: "TV Movie",
-  53: "Thriller",
-  10752: "War",
-  37: "Western",
-};
+import { fetchGetGenres } from "../../../services/MoviesApi"; 
 
 const MovieManagement = () => {
   const [movies, setMovies] = useState([]);
@@ -40,6 +19,25 @@ const MovieManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [genreList, setGenreList] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const genreList = await fetchGetGenres();
+        const map = genreList.reduce((acc, genre) => {
+          acc[genre.id] = genre.name;
+          return acc;
+        }, {});
+        setGenreList(map);
+      } catch (error) {
+        console.error("Lỗi khi fetch genres:", error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
 
   useEffect(() => {
     fetchMovies(currentPage);
@@ -49,7 +47,7 @@ const MovieManagement = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/api/movie?page=${page}&limit=10${searchQuery ? `&search=${searchQuery}` : ''}`,
+        `https://xemzui-production.up.railway.app/api/movie?page=${page}&limit=10${searchQuery ? `&search=${searchQuery}` : ''}`,
         {
           method: "GET",
           credentials: "include",
@@ -158,7 +156,7 @@ const MovieManagement = () => {
         <div className="flex flex-wrap gap-1">
           {genre_ids?.slice(0, 2).map((id) => (
             <Tag key={id} color="blue" className="m-0">
-              {GENRE_MAP[id] || "Unknown"}
+              {genreList[id] || "Unknown"}
             </Tag>
           ))}
           {genre_ids?.length > 2 && (
@@ -253,7 +251,7 @@ const MovieManagement = () => {
   };
 
   const handleEdit = (record) => {
-    console.log("Edit movie:", record);
+    navigate(`/admin/movies/update/${record.id}`);
   };
 
   return (

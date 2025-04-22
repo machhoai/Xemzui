@@ -42,10 +42,11 @@ export default function MovieDetail() {
                 setLoading(true); // bật trước khi fetch
                 const data = await fetchMovieDetail(movieId);
                 setMovie(data);
+                setLoading(false); // tắt sau khi xong
             } catch (error) {
                 console.error("Lỗi khi fetch movie detail:", error);
             } finally {
-                setLoading(false); // tắt sau khi xong
+                
             }
         };
     

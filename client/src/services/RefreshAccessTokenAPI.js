@@ -1,7 +1,8 @@
-const API_URL = "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 //API refresh access token
 export async function refreshAccessToken(callback = () => { }, setIsLoggedIn) {
-    fetch(`${API_URL}/api/refresh-access-token`, {
+    fetch(`${BASE_URL}/api/refresh-access-token`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

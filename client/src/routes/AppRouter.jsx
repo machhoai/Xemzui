@@ -26,6 +26,7 @@ import { useLoading } from "../contexts/LoadingContext";
 import Sidebar from "../components/admin/layout/Sidebar";
 import DashboardAdmin from "../pages/admin/movies/DashboardAdmin";
 const API_URL = "http://localhost:8000";
+import MovieUpdate from "../components/admin/movies/MovieUpdate";
 
 const AppRouter = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -38,7 +39,11 @@ const AppRouter = () => {
   //kiểm tra phiên đăng nhập
   useEffect(() => {
     const checkLoginStatus = async () => {
+<<<<<<< HEAD
       fetch(`${API_URL}/api/user`, {
+=======
+      fetch("https://xemzui-production.up.railway.app/api/user", {
+>>>>>>> 70be484c503141e67bfc379ccb6991c46c4d0a42
         method: "GET",
         credentials: "include",
       })
@@ -239,6 +244,7 @@ const AppRouter = () => {
             <Route path="/admin" element={<DashboardAdmin />} />
             <Route path="/admin/movies" element={<DashboardMovieAdmin />} />
             <Route path="/admin/movies/create" element={<MovieCreate />} />
+            <Route path="/admin/movies/update/:id" element={<MovieUpdate />} />
           </>
         )}
 

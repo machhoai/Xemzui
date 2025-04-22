@@ -15,7 +15,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
     if (!searchTerm.trim()) return;
 
     try {
-      const res = await fetch(`http://localhost:8000/api/movies?search=${encodeURIComponent(searchTerm)}`);
+      const res = await fetch(`https://xemzui-production.up.railway.app/api/movies?search=${encodeURIComponent(searchTerm)}`);
       const data = await res.json();
       setSearchResults(data.movies || []);
       setShowDropdown(true);

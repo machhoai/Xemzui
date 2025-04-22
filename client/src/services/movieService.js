@@ -52,3 +52,39 @@ export const deleteAllMovie = async () => {
   if (!res.ok) throw new Error("Xóa phim thất bại");
   return await res.json();
 };
+
+export const fetchMovieById = async (id) => {
+  const res = await fetch(`${BASE_URL}/api/get-movie-detail/${id}`, {
+    method: "GET",
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error("Lấy phim thất bại");
+  return await res.json();
+}
+
+export const updateMovie = async (id, movieData) => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/movies/${id}`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('token')}` // Add auth header
+      },
+      credentials: 'include',
+      body: JSON.stringify(movieData),
+    });
+
+    console.log(JSON.stringify(movieData)); // Log the response status
+    
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.message || `Failed to update movie: ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Update movie error:", error);
+    throw error;
+  }
+}

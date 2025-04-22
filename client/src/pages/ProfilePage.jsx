@@ -24,6 +24,7 @@ const ProfilePage = ({ setIsLoggedIn }) => {
     ];
 
     useEffect(() => {
+        setLoading(true);
         HandlerGetUserInfo(setUser, setIsLoggedIn);
         setLoading(false);
     },[])
