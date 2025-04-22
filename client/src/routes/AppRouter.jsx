@@ -39,11 +39,7 @@ const AppRouter = () => {
   //kiểm tra phiên đăng nhập
   useEffect(() => {
     const checkLoginStatus = async () => {
-<<<<<<< HEAD
-      fetch(`${API_URL}/api/user`, {
-=======
       fetch("https://xemzui-production.up.railway.app/api/user", {
->>>>>>> 70be484c503141e67bfc379ccb6991c46c4d0a42
         method: "GET",
         credentials: "include",
       })
