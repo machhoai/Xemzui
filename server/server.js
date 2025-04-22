@@ -13,8 +13,8 @@ dotenv.config();
 const app = express();
 app.use(
   cors({
-    origin: "https://xemzui.vercel.app", // Chỉ định chính xác client
-    credentials: true, // Cho phép gửi cookie/authorization header
+    origin: ["http://localhost:5173", "https://xemzui.vercel.app"],
+    credentials: true,
   })
 );
 app.use(cookieParser());
