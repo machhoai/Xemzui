@@ -11,9 +11,9 @@ export function HandlerUserLogout({ setIsLoggedIn }) {
         },
         credentials: "include",
     })
-        .then((response) => {
+        .then(async(response) => {
             if (response.status == 400) {
-                setIsLoggedIn(false);
+                await setIsLoggedIn(false);
                 console.log('Chưa đăng nhập hoặc phiên đăng nhập đã hêt')
                 window.location.href = '/login';
                 return;
