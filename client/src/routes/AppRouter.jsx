@@ -77,8 +77,8 @@ const AppRouter = () => {
   }, []);
 
   useEffect(() => {
-    console.log("isLoading đã đổi:", isLoading);
-  }, [isLoading]);
+    console.log("isLoading đã đổi:", isLoggedIn);
+  }, [isLoggedIn]);
 
   if(isCheckingUser) {
     return (
