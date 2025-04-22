@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const { runConnect, closeConnection } = require('./config/ConnectDB');
 const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middleware/Auth.js');
 const { HandlerLogin, HandlerSignUp, HandlerGetUser, HandlerLogout } = require('./Controllers/HandlerAccount.js');
-const { getMovieById, getMovies, getGenresList, createMovie, deleteMovie, deleteAllMovie } = require('./Controllers/MoviesController.js');
+const { getMovieById, getMovies, getGenresList, createMovie, deleteMovie, deleteAllMovie, updateMovie } = require('./Controllers/MoviesController.js');
 const { HandlerGetUserInfor, HandlerUpdateUserInfor, HandlerChangePassword, HandlerSendResetPasswordLink, HandlerResetPass } = require('./Controllers/HandlerUserData.js');
 // const { errorHandler } = require('./middleware/errorMiddleware');
 // const {
@@ -98,6 +98,8 @@ app.delete("/api/movies/:id", authenticateAdmin, (req, res) =>
 app.delete("/api/movies", authenticateAdmin, (req, res) =>
   deleteAllMovie(req, res)
 );
+
+app.put("/api/movies/:id", authenticateAdmin, (req, res) => updateMovie(req, res));
 
 app.get('/api/movie', (req, res) => {
   getMovies(req, res)

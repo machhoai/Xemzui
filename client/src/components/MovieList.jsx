@@ -22,11 +22,11 @@ export default function MovieList({ searchTerm, selectedGenres, selectedYears, s
         }, {});
         setGenreMap(map); // Set GENRE_MAP vào state
         await fetchMovies(map); // Gọi fetchMovies với genreMap mới
+        setLoading(false);
       } catch (err) {
         console.error(err);
         setError("Không thể load thể loại/phim");
       } finally {
-        setLoading(false); // Chỉ gọi setLoading ở đây
       }
     };
   

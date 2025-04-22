@@ -25,6 +25,7 @@ import { OrbitProgress } from "react-loading-indicators";
 import { useLoading } from "../contexts/LoadingContext";
 import Sidebar from "../components/admin/layout/Sidebar";
 import DashboardAdmin from "../pages/admin/movies/DashboardAdmin";
+import MovieUpdate from "../components/admin/movies/MovieUpdate";
 
 const AppRouter = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -241,6 +242,7 @@ const AppRouter = () => {
             <Route path="/admin" element={<DashboardAdmin />} />
             <Route path="/admin/movies" element={<DashboardMovieAdmin />} />
             <Route path="/admin/movies/create" element={<MovieCreate />} />
+            <Route path="/admin/movies/update/:id" element={<MovieUpdate />} />
           </>
         )}
 

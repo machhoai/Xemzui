@@ -31,32 +31,11 @@ import {
   CloseCircleOutlined,
 } from "@ant-design/icons";
 import { createMovie } from "../../../services/movieService";
+import { fetchGetGenres } from "../../../services/MoviesApi";
 
 const { TextArea } = Input;
 const { Option } = Select;
 const { Panel } = Collapse;
-
-const GENRE_MAP = {
-  28: "Action",
-  12: "Adventure",
-  16: "Animation",
-  35: "Comedy",
-  80: "Crime",
-  99: "Documentary",
-  18: "Drama",
-  10751: "Family",
-  14: "Fantasy",
-  36: "History",
-  27: "Horror",
-  10402: "Music",
-  9648: "Mystery",
-  10749: "Romance",
-  878: "Science Fiction",
-  10770: "TV Movie",
-  53: "Thriller",
-  10752: "War",
-  37: "Western",
-};
 
 const MovieCreate = () => {
   const [form] = Form.useForm();
@@ -69,6 +48,24 @@ const MovieCreate = () => {
   const [resultStatus, setResultStatus] = useState("success");
   const [resultMessage, setResultMessage] = useState("");
   const [errorDetails, setErrorDetails] = useState("");
+  const [genreList, setGenreList] = useState([]);
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const genreList = await fetchGetGenres();
+        const map = genreList.reduce((acc, genre) => {
+          acc[genre.id] = genre.name;
+          return acc;
+        }, {});
+        setGenreList(map);
+      } catch (error) {
+        console.error("Lỗi khi fetch genres:", error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
 
   useEffect(() => {
     if (selectedGenres && selectedGenres.length > 0) {
@@ -139,7 +136,7 @@ const MovieCreate = () => {
   const renderGenreTags = () => {
     return selectedGenres.map((genreId) => (
       <Tag key={genreId} color="blue" className="mb-2">
-        {GENRE_MAP[genreId]}
+        {genreList[genreId]}
       </Tag>
     ));
   };
@@ -377,11 +374,11 @@ const MovieCreate = () => {
                             color="blue"
                             className="flex items-center"
                           >
-                            {GENRE_MAP[props.value]}
+                            {genreList[props.value]}
                           </Tag>
                         )}
                       >
-                        {Object.entries(GENRE_MAP).map(([id, name]) => (
+                        {Object.entries(genreList).map(([id, name]) => (
                           <Option key={id} value={parseInt(id)}>
                             {name} (ID: {id})
                           </Option>

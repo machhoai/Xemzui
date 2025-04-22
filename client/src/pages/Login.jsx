@@ -41,7 +41,7 @@ const LoginPage = ({ onLogin, setIsAdmin }) => {
 
   setTimeout(() => {
     setLoading(false);
-  }, 100); // Giả lập thời gian tải 1 giây
+  }, 100);
 
   return (
     <div className="login-container">
