@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import './css/Signup.css';
+import '../pages/css/Signup.css';
 import { useLoading } from '../contexts/LoadingContext';
 
 const SignupPage = () => {
