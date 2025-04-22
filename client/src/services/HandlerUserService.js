@@ -2,7 +2,7 @@ import { refreshAccessToken } from "./RefreshAccessTokenAPI";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 //Đăng xuất
-export function HandlerUserLogout({ setIsLoggedIn }) {
+export function HandlerUserLogout( setIsLoggedIn ) {
     console.log("HandlerUserLogout: đang ở đây yêu cầu đăng xuất");
     fetch(`${BASE_URL}/api/logout`, {
         method: "GET",
