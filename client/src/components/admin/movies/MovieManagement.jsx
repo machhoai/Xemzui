@@ -47,7 +47,7 @@ const MovieManagement = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/api/movie?page=${page}&limit=10${searchQuery ? `&search=${searchQuery}` : ''}`,
+        `https://xemzui-production.up.railway.app/api/movie?page=${page}&limit=10${searchQuery ? `&search=${searchQuery}` : ''}`,
         {
           method: "GET",
           credentials: "include",

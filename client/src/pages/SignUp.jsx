@@ -68,7 +68,7 @@ const SignupPage = () => {
             // Xử lý đăng ký
             console.log('Đăng ký thành công:', formData);
             // Gửi dữ liệu đến API hoặc xử lý tiếp
-            fetch('http://localhost:8000/api/signup', {
+            fetch('https://xemzui-production.up.railway.app/api/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

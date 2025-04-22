@@ -47,7 +47,7 @@ export default function MovieList({
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/movies?search=${encodeURIComponent(
+        `https://xemzui-production.up.railway.app/api/movies?search=${encodeURIComponent(
           searchTerm
         )}&genres=${filters.genres}&years=${filters.years}&sort=${
           filters.sort
