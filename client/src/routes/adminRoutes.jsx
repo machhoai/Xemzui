@@ -7,7 +7,7 @@ const AdminRoute = () => {
 
   useEffect(() => {
     // Gọi API để lấy thông tin user
-    fetch("http://localhost:8000/api/user", {
+    fetch("https://xemzui-production.up.railway.app/api/user", {
       method: "GET",
       credentials: "include", 
     })

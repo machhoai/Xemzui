@@ -38,7 +38,7 @@ const AppRouter = () => {
   //kiểm tra phiên đăng nhập
   useEffect(() => {
     const checkLoginStatus = async () => {
-      fetch("http://localhost:8000/api/user", {
+      fetch("https://xemzui-production.up.railway.app/api/user", {
         method: "GET",
         credentials: "include",
       })
