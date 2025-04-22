@@ -53,7 +53,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
   }, [searchTerm]);
 
   const handleLogout = () => {
-    HandlerUserLogout({ setIsLoggedIn });
+    HandlerUserLogout(setIsLoggedIn);
   };
 
   return (
