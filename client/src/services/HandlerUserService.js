@@ -1,5 +1,5 @@
 import { refreshAccessToken } from "./RefreshAccessTokenAPI";
-
+const API_URL = "http://localhost:8000";
 //Đăng xuất
 export function HandlerUserLogout({ setIsLoggedIn }) {
     console.log("HandlerUserLogout: đang ở đây yêu cầu đăng xuất");
@@ -38,7 +38,7 @@ export function HandlerUserLogout({ setIsLoggedIn }) {
 
 //Đăng Nhập
 export function HandlerUserLogin(email, password, onLogin, setIsAdmin) {
-    fetch("http://localhost:8000/api/login", {
+    fetch(`${API_URL}/api/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -73,7 +73,7 @@ export function HandlerUserLogin(email, password, onLogin, setIsAdmin) {
 
 //lấy thông tin cá nhân của user
 export function HandlerGetUserInfo(setUserInfo, setIsLoggedIn) {
-    fetch(`http://localhost:8000/api/getuserinfo`, {
+    fetch(`${API_URL}/api/getuserinfo`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -99,7 +99,7 @@ export function HandlerGetUserInfo(setUserInfo, setIsLoggedIn) {
 
 //Cập nhật thông tin cá nhân của user
 export function HandlerUpdateUserInfo(userInfo) {
-    fetch(`http://localhost:8000/api/updateuserinfo`, {
+    fetch(`${API_URL}/api/updateuserinfo`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -133,7 +133,7 @@ export function HandlerUpdateUserInfo(userInfo) {
 
 //Đổi mật khẩu
 export function HandlerChangePassword(oldPassword, newPassword) {
-    fetch(`http://localhost:8000/api/changepassword`, {
+    fetch(`${API_URL}/api/changepassword`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -167,7 +167,7 @@ export function HandlerChangePassword(oldPassword, newPassword) {
 
 //gửi link trang reset mật khẩu 
 export function HandlerSendLinkResetPassword(email) {
-    fetch(`http://localhost:8000/api/sendmailtoresetpass`, {
+    fetch(`${API_URL}/api/sendmailtoresetpass`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -195,7 +195,7 @@ export function HandlerSendLinkResetPassword(email) {
 
 //reset mật khẩu
 export function HandlerResetPassword(token, newPassword, setIsSubmitted) {
-    fetch(`http://localhost:8000/api/resetpassword`, {
+    fetch(`${API_URL}/api/resetpassword`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

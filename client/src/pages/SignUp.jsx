@@ -3,7 +3,7 @@ import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import './css/Signup.css';
 import { useLoading } from '../contexts/LoadingContext';
-
+const API_URL = "http://localhost:8000";
 const SignupPage = () => {
     const { setLoading } = useLoading();
 
@@ -65,10 +65,9 @@ const SignupPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            // Xử lý đăng ký
             console.log('Đăng ký thành công:', formData);
-            // Gửi dữ liệu đến API hoặc xử lý tiếp
-            fetch('http://localhost:8000/api/signup', {
+
+            fetch(`${API_URL}/api/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

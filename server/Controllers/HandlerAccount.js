@@ -3,7 +3,7 @@ const {
   createAccessToken,
   createRefreshToken,
 } = require("../middleware/Auth.js");
-const {addTokenToBlacklist} = require("../middleware/Blacklist.js");
+const { addTokenToBlacklist } = require("../middleware/Blacklist.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
@@ -17,7 +17,7 @@ async function HandlerLogin(req, res) {
       return res.status(401).json({ message: "Tài khoản không tồn tại" });
     }
 
-    // So sánh mật khẩu đã nhập với mật khẩu đã mã hóa trong cơ sở dữ liệu
+    // So sánh mật khẩu đã nhập với mật khẩu đã mã hóa  trong collection
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Mật khẩu không đúng" });
@@ -32,22 +32,22 @@ async function HandlerLogin(req, res) {
       .status(200)
       .cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: false, // true nếu dùng HTTPS
-        sameSite: "Lax",
+        secure: true, // true nếu dùng HTTPS
+        sameSite: "None",
         maxAge: 15 * 60 * 1000,
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: false,
-        sameSite: "Lax",
+        secure: true,
+        sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       })
       .json({
         message: "Đăng nhập thành công",
-        user: { email: user.email, name: user.fullName , isAdmin: user.isAdmin },
+        user: { email: user.email, name: user.fullName, isAdmin: user.isAdmin },
       });
   } catch (error) {
-    console.error("Lỗi khi xác thực người dùng:", error);
+    console.error("Lỗi:", error);
     res.status(500).json({ message: "Lỗi máy chủ" });
   }
 }
@@ -59,14 +59,8 @@ async function HandlerSignUp(req, res) {
   console.log("HandlerSignUp - password: ", password);
   console.log("HandlerSignUp - fullName: ", fullName);
 
-  if (
-    !email ||
-    email === "" ||
-    !password ||
-    password === "" ||
-    !fullName ||
-    fullName === ""
-  ) {
+  if (!email || email === "" || !password || password === ""
+    || !fullName || fullName === "") {
     return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin" });
   }
 

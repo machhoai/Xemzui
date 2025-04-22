@@ -11,7 +11,6 @@ async function addTokenToBlacklist(token, expiresAt) {
     expiresAt,
   });
 
-  // Đảm bảo MongoDB tự xoá token sau khi hết hạn
   await BlacklistCollection.createIndex(
     { expiresAt: 1 },
     { expireAfterSeconds: 0 }

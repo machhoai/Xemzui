@@ -25,6 +25,7 @@ import { OrbitProgress } from "react-loading-indicators";
 import { useLoading } from "../contexts/LoadingContext";
 import Sidebar from "../components/admin/layout/Sidebar";
 import DashboardAdmin from "../pages/admin/movies/DashboardAdmin";
+const API_URL = "http://localhost:8000";
 
 const AppRouter = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -37,16 +38,13 @@ const AppRouter = () => {
   //kiểm tra phiên đăng nhập
   useEffect(() => {
     const checkLoginStatus = async () => {
-      fetch("http://localhost:8000/api/user", {
+      fetch(`${API_URL}/api/user`, {
         method: "GET",
         credentials: "include",
       })
         .then(async (response) => {
           if (response.status === 401) {
             //access token hết hạn
-            console.log(
-              "checkLoginStatus: lỗi 401 tôi đang ở đây yêu cầu đăng nhập lại"
-            );
             await refreshAccessToken(() => {
               checkLoginStatus();
             }, setIsLoggedIn);

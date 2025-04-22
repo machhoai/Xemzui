@@ -1,6 +1,7 @@
+const API_URL = "http://localhost:8000";
 //API refresh access token
 export async function refreshAccessToken(callback = () => { }, setIsLoggedIn) {
-    fetch("http://localhost:8000/api/refresh-access-token", {
+    fetch(`${API_URL}/api/refresh-access-token`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -8,7 +9,7 @@ export async function refreshAccessToken(callback = () => { }, setIsLoggedIn) {
         credentials: "include",
     })
     .then(async (response) => {
-        if (response.status === 402) { //user chưa đăng nhập hoặc refresh token hết hạn
+        if (response.status === 402) {
             console.log("refreshAccessToken: lỗi 402 tôi đang ở đây yêu câu đăng nhập lại");
             setIsLoggedIn(false);
             return;
@@ -23,3 +24,4 @@ export async function refreshAccessToken(callback = () => { }, setIsLoggedIn) {
         console.error('Error refreshing access token:', error);
     });
 }
+

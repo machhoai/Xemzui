@@ -32,7 +32,6 @@ const ResetPasswordPage = () => {
       return;
     }
 
-    // Gửi yêu cầu reset password đến server ở đây
     console.log('Password reset to:', password);
     // Gọi hàm reset password
     HandlerResetPassword(token, password, setIsSubmitted);
