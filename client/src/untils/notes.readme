@@ -1,5 +1,0 @@
-Ghi chú cho thư mục ở đây:
-- Untils dùng để chứa các hàm chung
-    Ví dụ:  export const formatDate = (dateString) => {
-                return new Date(dateString).toLocaleDateString('en-GB');
-            };

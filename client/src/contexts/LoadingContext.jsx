@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from "react";
-
 const LoadingContext = createContext();
 
 export const LoadingProvider = ({ children }) => {

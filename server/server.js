@@ -7,25 +7,6 @@ const { authenticate, refreshAccessToken, authenticateAdmin } = require('./middl
 const { HandlerLogin, HandlerSignUp, HandlerGetUser, HandlerLogout } = require('./Controllers/HandlerAccount.js');
 const { getMovieById, getMovies, getGenresList, createMovie, deleteMovie, deleteAllMovie } = require('./Controllers/MoviesController.js');
 const { HandlerGetUserInfor, HandlerUpdateUserInfor, HandlerChangePassword, HandlerSendResetPasswordLink, HandlerResetPass } = require('./Controllers/HandlerUserData.js');
-// const { errorHandler } = require('./middleware/errorMiddleware');
-// const {
-//   //authenticate,
-//   refreshAccessToken,
-//   authenticateAdmin,
-// } = require("./middleware/Auth.js");
-// const {
-//   HandlerLogin,
-//   HandlerSignUp,
-//   HandlerGetUser,
-// } = require("./Controllers/HandlerAccount.js");
-// const {
-//   createMovie,
-//   deleteMovie,
-//   deleteAllMovie,
-//   getMovies,
-// } = require("./Controllers/MoviesController.js");
-const { errorHandler } = require("./middleware/errorMiddleware");
-const { log } = require('console');
 
 dotenv.config();
 
@@ -111,9 +92,6 @@ app.get("/api/movies", (req, res) => {
 app.get("/api/getGenres", (req, res) => {
   getGenresList(req, res)
 })
-
-// xử lí lỗi middleware ---> luôn đặt ở cuối trước các router để throw lỗi json
-app.use(errorHandler);
 
 const PORT = process.env.PORT || 8000;
 

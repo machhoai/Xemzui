@@ -47,10 +47,10 @@ const Sidebar = ({ setIsLoggedIn }) => {
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {!collapsed && (
           <Link to="/admin" className="flex items-center">
-            <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center mr-2">
+            <div className="flex items-center justify-center w-8 h-8 mr-2 bg-blue-600 rounded-md">
               <span className="font-bold text-white">XZ</span>
             </div>
-            <span className="font-bold text-lg text-white">XemZui</span>
+            <span className="text-lg font-bold text-white">XemZui</span>
           </Link>
         )}
         <Button
@@ -69,9 +69,9 @@ const Sidebar = ({ setIsLoggedIn }) => {
       </div>
 
       {/* User Profile */}
-      <div className="p-4 flex items-center justify-between border-b border-gray-700 bg-gray-800">
+      <div className="flex items-center justify-between p-4 bg-gray-800 border-b border-gray-700">
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white">
+          <div className="flex items-center justify-center w-10 h-10 text-white bg-blue-600 rounded-full">
             <UserOutlined style={{ fontSize: "18px" }} />
           </div>
           {!collapsed && (
@@ -151,29 +151,13 @@ const Sidebar = ({ setIsLoggedIn }) => {
         >
           <Link to="/admin/movies/create">Add Movie</Link>
         </Menu.Item>
-        <Menu.Item
-          key="4"
-          icon={<UserOutlined />}
-          onClick={() => setActiveKey("4")}
-          className="
-            !text-gray-400 hover:!text-white
-            hover:!bg-gray-800
-            !transition-all
-          "
-        >
-          <Link to="/admin/users">Users</Link>
-        </Menu.Item>
       </Menu>
 
       {/* Footer */}
       <div className="p-4 border-t border-gray-700">
         <Link
           to="/"
-          className="
-            flex items-center 
-            text-gray-400 hover:text-white
-            transition-colors duration-200
-          "
+          className="flex items-center text-gray-400 transition-colors duration-200 hover:text-white"
         >
           <ArrowLeftOutlined className="mr-2" />
           {!collapsed && <span>Back to Main Site</span>}

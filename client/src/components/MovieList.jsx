@@ -4,7 +4,12 @@ import { fetchGetGenres } from "../services/MoviesApi";
 import { useLoading } from "../contexts/LoadingContext";
 import Pagination from "./Pagination";
 
-export default function MovieList({ searchTerm, selectedGenres, selectedYears, sort }) {
+export default function MovieList({
+  searchTerm,
+  selectedGenres,
+  selectedYears,
+  sort,
+}) {
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState(null);
   const { setLoading } = useLoading();
@@ -29,7 +34,7 @@ export default function MovieList({ searchTerm, selectedGenres, selectedYears, s
         setLoading(false); // Chỉ gọi setLoading ở đây
       }
     };
-  
+
     fetchGenresAndMovies(); // Gọi lại hàm khi các dependency thay đổi
   }, [searchTerm, selectedGenres, selectedYears, sort]); // Các dependency cần theo dõi
 
@@ -39,17 +44,25 @@ export default function MovieList({ searchTerm, selectedGenres, selectedYears, s
       years: selectedYears.join(","),
       sort,
     };
-  
+
     try {
       const response = await fetch(
-        `http://localhost:8000/api/movies?search=${encodeURIComponent(searchTerm)}&genres=${filters.genres}&years=${filters.years}&sort=${filters.sort}&page=${page}&limit=${limit}`,
-        { method: "GET", headers: { "Content-Type": "application/json" }, credentials: "include" }
+        `http://localhost:8000/api/movies?search=${encodeURIComponent(
+          searchTerm
+        )}&genres=${filters.genres}&years=${filters.years}&sort=${
+          filters.sort
+        }&page=${page}&limit=${limit}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        }
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to fetch movies");
       }
-  
+
       const data = await response.json();
 
       if (data.totalPages >= 0) {
@@ -77,38 +90,46 @@ export default function MovieList({ searchTerm, selectedGenres, selectedYears, s
     console.log("Đang chuyển trang:", page);
     const limit = 20; // Số lượng phim trên mỗi trang
     setLoading(true); // Bắt đầu loading khi chuyển trang
-    fetchMovies(genreMap, page,limit); // Gọi lại hàm fetchMovies với trang mới
-  }
+    fetchMovies(genreMap, page, limit); // Gọi lại hàm fetchMovies với trang mới
+  };
 
   if (error) {
-    return <div className="text-red-500 text-center">Lỗi: {error}</div>;
+    return <div className="text-center text-red-500">Lỗi: {error}</div>;
   }
 
   return (
     <>
-    {movies.length === 0 && (
-      <div className="col-span-full text-center text-gray-500">Không có phim nào</div>
-    )}
-    {movies.length > 0 && (
-      <>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 ">
-          {movies.length === 0 ? (
-            <div className="col-span-full text-center text-gray-500">Không có phim nào</div>
-          ) : (
-            movies.map((movie) => (
-              <div key={movie._id} className="w-full">
-                <MovieCard movie={movie} />
-              </div>
-            ))
-          )}
+      {movies.length === 0 && (
+        <div className="text-center text-gray-500 col-span-full">
+          Không có phim nào
         </div>
-        {
-          totalPages > 1 && (
-            <Pagination handlePageChange = {handlePageChange} pages = {totalPages}/>
-        )}
-        <p className="mt-2">Có {totalMovies} kết quả trùng khớp.</p>
-      </>
-    ) }
+      )}
+      {movies.length > 0 && (
+        <>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 ">
+            {movies.length === 0 ? (
+              <div className="text-center text-gray-500 col-span-full">
+                Không có phim nào
+              </div>
+            ) : (
+              movies.map((movie) => (
+                <div key={movie._id} className="w-full">
+                  <MovieCard movie={movie} />
+                </div>
+              ))
+            )}
+          </div>
+          {totalPages > 1 && (
+            <Pagination
+              handlePageChange={handlePageChange}
+              pages={totalPages}
+            />
+          )}
+          <p className="mt-2 text-white">
+            Có {totalMovies} kết quả trùng khớp.
+          </p>
+        </>
+      )}
     </>
   );
 }

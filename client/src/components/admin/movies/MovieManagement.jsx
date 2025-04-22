@@ -99,14 +99,14 @@ const MovieManagement = () => {
 
   const columns = [
     {
-      title: <span className="text-gray-300 font-medium">ID</span>,
+      title: <span className="font-medium text-gray-300">ID</span>,
       dataIndex: "id",
       key: "key",
       width: 80,
-      render: (id) => <span className="text-blue-400 font-mono">#{id}</span>,
+      render: (id) => <span className="font-mono text-blue-400">{id}</span>,
     },
     {
-      title: <span className="text-gray-300 font-medium">POSTER</span>,
+      title: <span className="font-medium text-gray-300">POSTER</span>,
       dataIndex: "poster_path",
       key: "poster",
       width: 120,
@@ -117,21 +117,21 @@ const MovieManagement = () => {
               ? `https://image.tmdb.org/t/p/w500${poster_path}`
               : "https://via.placeholder.com/500x750?text=No+Image"}
             alt="Movie Poster"
-            className="w-16 h-24 object-cover rounded-lg shadow-md transition-transform duration-300 group-hover:scale-105"
+            className="object-cover w-16 h-24 transition-transform duration-300 rounded-lg shadow-md group-hover:scale-105"
           />
-          <div className="absolute inset-0  bg-opacity-30 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 rounded-lg opacity-0 bg-opacity-30 group-hover:opacity-100">
           </div>
         </div>
       ),
     },
     {
-      title: <span className="text-gray-300 font-medium">TITLE</span>,
+      title: <span className="font-medium text-gray-300">TITLE</span>,
       dataIndex: "title",
       key: "title",
       render: (title) => <span className="font-medium text-blue-400">{title}</span>,
     },
     {
-      title: <span className="text-gray-300 font-medium">RATING</span>,
+      title: <span className="font-medium text-gray-300">RATING</span>,
       dataIndex: "vote_average",
       key: "rating",
       width: 100,
@@ -139,7 +139,7 @@ const MovieManagement = () => {
         const rating = Number(vote_average);
         return !isNaN(rating) ? (
           <div className="flex items-center">
-            <span className="text-yellow-400 font-medium mr-1">
+            <span className="mr-1 font-medium text-yellow-400">
               {rating.toFixed(1)}
             </span>
             <span className="text-yellow-400">★</span>
@@ -150,7 +150,7 @@ const MovieManagement = () => {
       },
     },
     {
-      title: <span className="text-gray-300 font-medium">GENRES</span>,
+      title: <span className="font-medium text-gray-300">GENRES</span>,
       dataIndex: "genre_ids",
       key: "category",
       width: 180,
@@ -170,21 +170,21 @@ const MovieManagement = () => {
       ),
     },
     {
-      title: <span className="text-gray-300 font-medium">STATUS</span>,
+      title: <span className="font-medium text-gray-300">STATUS</span>,
       dataIndex: "video",
       key: "status",
       width: 100,
       render: (video) => (
         <Tag
           color={video ? "green" : "red"}
-          className="text-white px-2 py-1 rounded-full"
+          className="px-2 py-1 text-white rounded-full"
         >
           {video ? "Active" : "Hidden"}
         </Tag>
       ),
     },
     {
-      title: <span className="text-gray-300 font-medium">RELEASED</span>,
+      title: <span className="font-medium text-gray-300">RELEASED</span>,
       dataIndex: "release_date",
       key: "createdDate",
       width: 120,
@@ -193,7 +193,7 @@ const MovieManagement = () => {
       ),
     },
     {
-      title: <span className="text-gray-300 font-medium">ACTIONS</span>,
+      title: <span className="font-medium text-gray-300">ACTIONS</span>,
       key: "actions",
       width: 120,
       render: (_, record) => (
@@ -241,7 +241,7 @@ const MovieManagement = () => {
           <Button
             type="text"
             icon={<MoreOutlined className="text-gray-400 hover:text-white" />}
-            className="hover:bg-gray-700 rounded-full"
+            className="rounded-full hover:bg-gray-700"
           />
         </Dropdown>
       ),
@@ -257,33 +257,33 @@ const MovieManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 p-6">
-      <div className="max-w-7xl mx-auto ">
+    <div className="min-h-screen p-6 bg-gradient-to-br from-gray-900 to-blue-900">
+      <div className="mx-auto max-w-7xl ">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 ">
+        <div className="flex flex-col items-start justify-between gap-4 mb-8 md:flex-row md:items-center ">
           <div>
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
               Movie Catalog
             </h1>
-            <p className="text-gray-400 mt-1">
+            <p className="mt-1 text-gray-400">
               {totalItems} movies in database
             </p>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto ">
+          <div className="flex flex-col w-full gap-3 md:flex-row md:w-auto ">
             <Input
               placeholder="Search movies..."
               prefix={<SearchOutlined className="text-gray-400" />}
               value={searchQuery}
               onChange={handleSearch}
               onPressEnter={handleSearchSubmit}
-              className="bg-gray-800 border-gray-700 text-white rounded-lg h-10 w-full md:w-64"
+              className="w-full h-10 text-white bg-gray-800 border-gray-700 rounded-lg md:w-64"
               allowClear
             />
             <div className="flex gap-3">
               <Button
                 icon={<FilterOutlined />}
-                className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700 rounded-lg h-10"
+                className="h-10 text-white bg-gray-800 border-gray-700 rounded-lg hover:bg-gray-700"
               >
                 Filters
               </Button>
@@ -291,7 +291,7 @@ const MovieManagement = () => {
                 <Button
                   type="primary"
                   icon={<PlusOutlined />}
-                  className="bg-blue-600 hover:bg-blue-500 rounded-lg h-10 flex items-center"
+                  className="flex items-center h-10 bg-blue-600 rounded-lg hover:bg-blue-500"
                 >
                   Add Movie
                 </Button>
@@ -301,7 +301,7 @@ const MovieManagement = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-xl overflow-hidden shadow-xl">
+        <div className="overflow-hidden bg-gray-800 bg-opacity-50 border border-gray-700 shadow-xl rounded-xl">
           <Table
             columns={columns}
             dataSource={movies.map((movie, index) => ({

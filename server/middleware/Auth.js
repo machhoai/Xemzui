@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const asyncHandler = require('express-async-handler');
 const { isTokenBlacklisted } = require('./Blacklist.js');
 
 //tao access token
@@ -46,7 +45,6 @@ const refreshAccessToken = (req, res) => {
 // middleware xác thực token
 function authenticate(req, res, next) {
     const token = req.cookies.accessToken;
-    console.log("authenticate - token: ", token);
     if (!token) {
         return res.status(401).json({ message: "Access token không hợp lệ hoặc đã hết hạn" });
     }
