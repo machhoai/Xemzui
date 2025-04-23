@@ -25,7 +25,7 @@ import { OrbitProgress } from "react-loading-indicators";
 import { useLoading } from "../contexts/LoadingContext";
 import Sidebar from "../components/admin/layout/Sidebar";
 import DashboardAdmin from "../pages/admin/movies/DashboardAdmin";
-const API_URL = "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 import MovieUpdate from "../components/admin/movies/MovieUpdate";
 
 const AppRouter = () => {
@@ -39,7 +39,7 @@ const AppRouter = () => {
   //kiểm tra phiên đăng nhập
   useEffect(() => {
     const checkLoginStatus = async () => {
-      fetch("https://xemzui-production.up.railway.app/api/user", {
+      fetch(`${BASE_URL}/api/user`, {
         method: "GET",
         credentials: "include",
       })

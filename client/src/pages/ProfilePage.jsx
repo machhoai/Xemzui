@@ -30,7 +30,7 @@ const ProfilePage = ({ setIsLoggedIn }) => {
     },[])
 
     const handleLogout = () => {
-        HandlerUserLogout({ setIsLoggedIn });
+        HandlerUserLogout(setIsLoggedIn);
     };
 
     const handlePasswordChange = (e) => {

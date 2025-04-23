@@ -3,7 +3,7 @@ import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 // import '../pages/css/Signup.css';
 import { useLoading } from '../contexts/LoadingContext';
-const API_URL = "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 const SignupPage = () => {
     const { setLoading } = useLoading();
 
@@ -67,7 +67,7 @@ const SignupPage = () => {
         if (validateForm()) {
             console.log('Đăng ký thành công:', formData);
             // Gửi dữ liệu đến API hoặc xử lý tiếp
-            fetch('https://xemzui-production.up.railway.app/api/signup', {
+            fetch(`${BASE_URL}/api/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
