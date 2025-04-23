@@ -214,7 +214,7 @@ const deleteAllMovie = asyncHandler(async (req, res) => {
   }
 });
 
-// create movie
+// create movie  
 // POST /api/movies
 const createMovie = asyncHandler(async (req, res) => {
   try {
@@ -233,28 +233,6 @@ const createMovie = asyncHandler(async (req, res) => {
       vote_average,
       vote_count,
     } = req.body;
-
-    const prefix = "MV";
-
-    const firstGenreId = genre_ids && genre_ids.length > 0 ? genre_ids[0] : 0;
-    const paddedGenreId = String(firstGenreId).padStart(5, "0");
-
-    const lastMovie = await MoviesCollection.findOne(
-      { userId: req.user._id },
-      { sort: { _id: -1 } }
-    );
-
-    let sequenceNumber = 1;
-    if (lastMovie && lastMovie.id && lastMovie.id.startsWith("MV")) {
-      const lastSequence = lastMovie.id.slice(-7);
-      if (!isNaN(parseInt(lastSequence))) {
-        sequenceNumber = parseInt(lastSequence) + 1;
-      }
-    }
-
-    const paddedSequence = String(sequenceNumber).padStart(7, "0");
-
-    const customId = `${prefix}${paddedGenreId}${paddedSequence}`;
 
     const movie = {
       adult,

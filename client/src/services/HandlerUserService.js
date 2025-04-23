@@ -2,8 +2,14 @@ import { refreshAccessToken } from "./RefreshAccessTokenAPI";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 //Đăng xuất
-export function HandlerUserLogout( setIsLoggedIn ) {
-    console.log("HandlerUserLogout: đang ở đây yêu cầu đăng xuất");
+export function HandlerUserLogout(setIsLoggedIn) {
+    console.log("HandlerUserLogout: đang yêu cầu đăng xuất");
+    
+    // Kiểm tra xem setIsLoggedIn có phải là hàm không
+    const updateLoggedInState = typeof setIsLoggedIn === 'function' 
+        ? setIsLoggedIn 
+        : () => console.warn("setIsLoggedIn không phải là hàm");
+    
     fetch(`${BASE_URL}/api/logout`, {
         method: "GET",
         headers: {
@@ -11,30 +17,19 @@ export function HandlerUserLogout( setIsLoggedIn ) {
         },
         credentials: "include",
     })
-        .then(async(response) => {
-            if (response.status == 400) {
-                await setIsLoggedIn(false);
-                console.log('Chưa đăng nhập hoặc phiên đăng nhập đã hêt')
-                window.location.href = '/login';
-                return;
-            }
-            else if (!response.ok) {
-                alert("Lỗi khi đăng xuất. Vui lòng thử lại sau!");
-                return;
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (!data) return;
-
-            window.alert(data.message);
-            setIsLoggedIn(false);
-            window.location.href = '/login';
-        })
-        .catch((error) => {
-            console.error("Lỗi:", error);
-            alert("Đăng xuất không thành công!");
-        });
+    .then((response) => {
+        // Sử dụng hàm updateLoggedInState an toàn
+        updateLoggedInState(false);
+        
+        // Không cần đợi response, chuyển hướng ngay
+        window.location.href = '/login';
+        return null; // Không cần xử lý response.json()
+    })
+    .catch((error) => {
+        console.error("Lỗi khi đăng xuất:", error);
+        // Vẫn cố gắng chuyển hướng
+        window.location.href = '/login';
+    });
 }
 
 //Đăng Nhập
@@ -223,3 +218,22 @@ export function HandlerResetPassword(token, newPassword, setIsSubmitted) {
             console.error("Lỗi:", error);
         });
 }
+
+//API lấy thông tin người dùng
+export async function HandleGetUser() {
+    try {
+      const response = await fetch(`${BASE_URL}/api/user`, {
+        method: "GET",
+        credentials: "include",
+      });
+  
+      if (!response.ok) {
+        throw new Error("Không thể lấy thông tin người dùng");
+      }
+  
+      return await response.json();
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin user:", error);
+      throw error;
+    }
+  }

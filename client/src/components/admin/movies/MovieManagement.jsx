@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Button, Space, message, Popconfirm, Input, Dropdown } from "antd";
+import {
+  Table,
+  Tag,
+  Button,
+  Space,
+  message,
+  Popconfirm,
+  Input,
+  Dropdown,
+} from "antd";
 import {
   EyeOutlined,
   EditOutlined,
@@ -7,11 +16,11 @@ import {
   PlusOutlined,
   FilterOutlined,
   SearchOutlined,
-  MoreOutlined
+  MoreOutlined,
 } from "@ant-design/icons";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { deleteMovie } from "../../../services/movieService";
-import { fetchGetGenres } from "../../../services/MoviesApi"; 
+import { Link, useNavigate } from "react-router-dom";
+import { deleteMovie, fetchMovies } from "../../../services/movieService";
+import { fetchGetGenres } from "../../../services/movieService";
 
 const MovieManagement = () => {
   const [movies, setMovies] = useState([]);
@@ -19,8 +28,13 @@ const MovieManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [genreList, setGenreList] = useState([]);
+  const [genreList, setGenreList] = useState({});
   const navigate = useNavigate();
+  
+  // Thêm những biến trạng thái mới cần thiết cho fetchMovies
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [selectedYears, setSelectedYears] = useState([]);
+  const [sort, setSort] = useState("newest");
 
   useEffect(() => {
     const fetchGenres = async () => {
@@ -40,26 +54,23 @@ const MovieManagement = () => {
   }, []);
 
   useEffect(() => {
-    fetchMovies(currentPage);
+    handleFetchMovies(currentPage);
   }, [currentPage]);
 
-  const fetchMovies = async (page) => {
+  const handleFetchMovies = async (page) => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://xemzui-production.up.railway.app/api/movie?page=${page}&limit=10${searchQuery ? `&search=${searchQuery}` : ''}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
+      const data = await fetchMovies(
+        genreList,           // genreMap
+        page,                // page
+        10,                  // limit
+        searchQuery,         // searchTerm
+        selectedGenres,      // selectedGenres
+        selectedYears,       // selectedYears
+        sort                 // sort
       );
-      const data = await response.json();
-      if (response.ok) {
-        setMovies(data.movies);
-        setTotalItems(data.total);
-      } else {
-        message.error(data.message || "Error fetching movies");
-      }
+      setMovies(data.movies);
+      setTotalItems(data.total);
     } catch (error) {
       console.error("Error fetching movies:", error);
       message.error("An error occurred while fetching movies");
@@ -86,13 +97,14 @@ const MovieManagement = () => {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    if (e.target.value === '') {
-      fetchMovies(currentPage);
+    if (e.target.value === "") {
+      handleFetchMovies(currentPage);
     }
   };
 
   const handleSearchSubmit = () => {
-    fetchMovies(1);
+    setCurrentPage(1); // Reset về trang 1 khi tìm kiếm
+    handleFetchMovies(1);
   };
 
   const columns = [
@@ -111,14 +123,15 @@ const MovieManagement = () => {
       render: (poster_path) => (
         <div className="relative group">
           <img
-            src={poster_path 
-              ? `https://image.tmdb.org/t/p/w500${poster_path}`
-              : "https://via.placeholder.com/500x750?text=No+Image"}
+            src={
+              poster_path
+                ? `https://image.tmdb.org/t/p/w500${poster_path}`
+                : "https://via.placeholder.com/500x750?text=No+Image"
+            }
             alt="Movie Poster"
             className="object-cover w-16 h-24 transition-transform duration-300 rounded-lg shadow-md group-hover:scale-105"
           />
-          <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 rounded-lg opacity-0 bg-opacity-30 group-hover:opacity-100">
-          </div>
+          <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 rounded-lg opacity-0 bg-opacity-30 group-hover:opacity-100"></div>
         </div>
       ),
     },
@@ -126,7 +139,9 @@ const MovieManagement = () => {
       title: <span className="font-medium text-gray-300">TITLE</span>,
       dataIndex: "title",
       key: "title",
-      render: (title) => <span className="font-medium text-blue-400">{title}</span>,
+      render: (title) => (
+        <span className="font-medium text-blue-400">{title}</span>
+      ),
     },
     {
       title: <span className="font-medium text-gray-300">RATING</span>,
@@ -199,19 +214,19 @@ const MovieManagement = () => {
           menu={{
             items: [
               {
-                key: 'view',
-                label: 'View Details',
+                key: "view",
+                label: "View Details",
                 icon: <EyeOutlined />,
-                onClick: () => handleView(record)
+                onClick: () => handleView(record),
               },
               {
-                key: 'edit',
-                label: 'Edit Movie',
+                key: "edit",
+                label: "Edit Movie",
                 icon: <EditOutlined />,
-                onClick: () => handleEdit(record)
+                onClick: () => handleEdit(record),
               },
               {
-                key: 'delete',
+                key: "delete",
                 label: (
                   <Popconfirm
                     title="Xóa phim này?"
@@ -220,7 +235,7 @@ const MovieManagement = () => {
                     okText="Có, xóa phim"
                     cancelText="Không"
                     okButtonProps={{
-                      className: "!bg-red-500 !hover:bg-red-600"
+                      className: "!bg-red-500 !hover:bg-red-600",
                     }}
                   >
                     <div className="flex items-center">
@@ -230,10 +245,10 @@ const MovieManagement = () => {
                   </Popconfirm>
                 ),
                 danger: true,
-              } 
+              },
             ],
           }}
-          trigger={['click']}
+          trigger={["click"]}
           placement="bottomRight"
         >
           <Button
