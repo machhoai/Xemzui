@@ -115,13 +115,8 @@ const Header = (isLoggedIn, setIsLoggedIn) => {
                   key={movie._id || movie.id} // Sử dụng movie.id làm backup nếu _id không tồn tại
                   className="block px-4 py-2 text-sm hover:bg-gray-100"
                   onClick={() => {
-<<<<<<< HEAD
-                    // setShowDropdown(false);
-                    setSearchTerm(''); 
-=======
-                    setShowDropdown(false);
-                    setSearchTerm("");
->>>>>>> ea2a3f452488772c759d9b363da32353462bc208
+                    // setShowDropdown(false);                   
+                     setSearchTerm(''); 
                   }}
                 >
                   {movie.title}
