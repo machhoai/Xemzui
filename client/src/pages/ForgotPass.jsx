@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FaEnvelope, FaArrowLeft } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { HandlerSendLinkResetPassword } from '../services/HandlerUserService';
+import { useLoading } from "../contexts/LoadingContext";
 import './css/ForgotPass.css';
 
 const ForgotPassword = () => {
@@ -9,7 +10,7 @@ const ForgotPassword = () => {
   const [emailError, setEmailError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const { setLoading } = useLoading();
   const validateEmail = () => {
     if (!email.endsWith('@gmail.com')) {
       setEmailError('Email phải có đuôi @gmail.com');
@@ -25,9 +26,8 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     
-    // Giả lập gửi email reset mật khẩu
     try {
-      await HandlerSendLinkResetPassword(email);
+      HandlerSendLinkResetPassword(email);
       setIsSubmitted(true);
     } catch (error) {
       console.error('Lỗi gửi email:', error);
@@ -35,6 +35,10 @@ const ForgotPassword = () => {
       setIsLoading(false);
     }
   };
+
+  setTimeout(() => {
+    setLoading(false);
+  }, 100); // Giả lập thời gian tải 1 giây
 
   return (
     <div className="forgot-password-container">

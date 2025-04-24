@@ -1,44 +1,40 @@
 import { refreshAccessToken } from "./RefreshAccessTokenAPI";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 //Đăng xuất
-export function HandlerUserLogout({ setIsLoggedIn }) {
-    console.log("HandlerUserLogout: đang ở đây yêu cầu đăng xuất");
-    fetch("http://localhost:8000/api/logout", {
+export function HandlerUserLogout(setIsLoggedIn) {
+    console.log("HandlerUserLogout: đang yêu cầu đăng xuất");
+    
+    // Kiểm tra xem setIsLoggedIn có phải là hàm không
+    const updateLoggedInState = typeof setIsLoggedIn === 'function' 
+        ? setIsLoggedIn 
+        : () => console.warn("setIsLoggedIn không phải là hàm");
+    
+    fetch(`${BASE_URL}/api/logout`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
         },
         credentials: "include",
     })
-        .then((response) => {
-            if (response.status == 400) {
-                setIsLoggedIn(false);
-                console.log('Chưa đăng nhập hoặc phiên đăng nhập đã hêt')
-                window.location.href = '/login';
-                return;
-            }
-            else if (!response.ok) {
-                alert("Lỗi khi đăng xuất. Vui lòng thử lại sau!");
-                return;
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (!data) return;
-
-            window.alert(data.message);
-            setIsLoggedIn(false);
-            window.location.href = '/login';
-        })
-        .catch((error) => {
-            console.error("Lỗi:", error);
-            alert("Đăng xuất không thành công!");
-        });
+    .then((response) => {
+        // Sử dụng hàm updateLoggedInState an toàn
+        updateLoggedInState(false);
+        
+        // Không cần đợi response, chuyển hướng ngay
+        window.location.href = '/login';
+        return null; // Không cần xử lý response.json()
+    })
+    .catch((error) => {
+        console.error("Lỗi khi đăng xuất:", error);
+        // Vẫn cố gắng chuyển hướng
+        window.location.href = '/login';
+    });
 }
 
 //Đăng Nhập
 export function HandlerUserLogin(email, password, onLogin, setIsAdmin) {
-    fetch("http://localhost:8000/api/login", {
+    fetch(`${BASE_URL}/api/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -73,7 +69,7 @@ export function HandlerUserLogin(email, password, onLogin, setIsAdmin) {
 
 //lấy thông tin cá nhân của user
 export function HandlerGetUserInfo(setUserInfo, setIsLoggedIn) {
-    fetch(`http://localhost:8000/api/getuserinfo`, {
+    fetch(`${BASE_URL}/api/getuserinfo`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -99,7 +95,7 @@ export function HandlerGetUserInfo(setUserInfo, setIsLoggedIn) {
 
 //Cập nhật thông tin cá nhân của user
 export function HandlerUpdateUserInfo(userInfo) {
-    fetch(`http://localhost:8000/api/updateuserinfo`, {
+    fetch(`${BASE_URL}/api/updateuserinfo`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -133,7 +129,7 @@ export function HandlerUpdateUserInfo(userInfo) {
 
 //Đổi mật khẩu
 export function HandlerChangePassword(oldPassword, newPassword) {
-    fetch(`http://localhost:8000/api/changepassword`, {
+    fetch(`${BASE_URL}/api/changepassword`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -167,7 +163,7 @@ export function HandlerChangePassword(oldPassword, newPassword) {
 
 //gửi link trang reset mật khẩu 
 export function HandlerSendLinkResetPassword(email) {
-    fetch(`http://localhost:8000/api/sendmailtoresetpass`, {
+    fetch(`${BASE_URL}/api/sendmailtoresetpass`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -195,7 +191,7 @@ export function HandlerSendLinkResetPassword(email) {
 
 //reset mật khẩu
 export function HandlerResetPassword(token, newPassword, setIsSubmitted) {
-    fetch(`http://localhost:8000/api/resetpassword`, {
+    fetch(`${BASE_URL}/api/resetpassword`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -222,3 +218,22 @@ export function HandlerResetPassword(token, newPassword, setIsSubmitted) {
             console.error("Lỗi:", error);
         });
 }
+
+//API lấy thông tin người dùng
+export async function HandleGetUser() {
+    try {
+      const response = await fetch(`${BASE_URL}/api/user`, {
+        method: "GET",
+        credentials: "include",
+      });
+  
+      if (!response.ok) {
+        throw new Error("Không thể lấy thông tin người dùng");
+      }
+  
+      return await response.json();
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin user:", error);
+      throw error;
+    }
+  }

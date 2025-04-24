@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 import { HandlerUserLogout } from "../../../services/HandlerUserService";
 
-const Sidebar = ({ setIsLoggedIn }) => {
+const Sidebar = (setIsLoggedIn) => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeKey, setActiveKey] = useState("1");
 
@@ -22,7 +22,7 @@ const Sidebar = ({ setIsLoggedIn }) => {
   };
 
   const handleLogout = () => {
-    HandlerUserLogout({ setIsLoggedIn });
+    HandlerUserLogout(setIsLoggedIn);
   };
 
   return (

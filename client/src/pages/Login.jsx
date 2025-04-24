@@ -34,7 +34,6 @@ const LoginPage = ({ onLogin, setIsAdmin }) => {
     }
 
     if (isValid) {
-      // Gọi API đăng nhập
       HandlerUserLogin(email, password, onLogin, setIsAdmin);
     };
   }

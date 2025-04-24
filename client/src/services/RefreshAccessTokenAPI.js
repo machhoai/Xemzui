@@ -1,6 +1,8 @@
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 //API refresh access token
 export async function refreshAccessToken(callback = () => { }, setIsLoggedIn) {
-    fetch("http://localhost:8000/api/refresh-access-token", {
+    fetch(`${BASE_URL}/api/refresh-access-token`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -8,7 +10,7 @@ export async function refreshAccessToken(callback = () => { }, setIsLoggedIn) {
         credentials: "include",
     })
     .then(async (response) => {
-        if (response.status === 402) { //user chưa đăng nhập hoặc refresh token hết hạn
+        if (response.status === 402) {
             console.log("refreshAccessToken: lỗi 402 tôi đang ở đây yêu câu đăng nhập lại");
             setIsLoggedIn(false);
             return;
@@ -23,3 +25,4 @@ export async function refreshAccessToken(callback = () => { }, setIsLoggedIn) {
         console.error('Error refreshing access token:', error);
     });
 }
+

@@ -31,7 +31,7 @@ import {
   CloseCircleOutlined,
 } from "@ant-design/icons";
 import { createMovie } from "../../../services/movieService";
-import { fetchGetGenres } from "../../../services/MoviesApi";
+import { fetchGetGenres } from "../../../services/movieService";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -42,13 +42,13 @@ const MovieCreate = () => {
   const [submitting, setSubmitting] = useState(false);
   const [posterPreview, setPosterPreview] = useState("");
   const [backdropPreview, setBackdropPreview] = useState("");
-  const [generatedId, setGeneratedId] = useState("");
-  const [selectedGenres, setSelectedGenres] = useState([]);
   const [resultModalVisible, setResultModalVisible] = useState(false);
   const [resultStatus, setResultStatus] = useState("success");
   const [resultMessage, setResultMessage] = useState("");
   const [errorDetails, setErrorDetails] = useState("");
   const [genreList, setGenreList] = useState([]);
+  const [generatedId, setGeneratedId] = useState("");
+  const [selectedGenres, setSelectedGenres] = useState([]);
 
   useEffect(() => {
     const fetchGenres = async () => {
@@ -96,14 +96,11 @@ const MovieCreate = () => {
       if (generatedId) {
         values.id = generatedId;
       }
-
-      const response = await createMovie(values);
-
+      await createMovie(values);
       // Hiển thị thông báo thành công
       setResultStatus("success");
       setResultMessage(`Phim "${values.title}" đã được tạo thành công!`);
       setResultModalVisible(true);
-
       // Vẫn hiển thị message nhỏ ở góc màn hình
       message.success("Phim đã được tạo thành công!");
     } catch (error) {
@@ -154,9 +151,9 @@ const MovieCreate = () => {
         status={resultStatus}
         icon={
           resultStatus === "success" ? (
-            <CheckCircleOutlined className="text-green-500 text-5xl" />
+            <CheckCircleOutlined className="text-5xl text-green-500" />
           ) : (
-            <CloseCircleOutlined className="text-red-500 text-5xl" />
+            <CloseCircleOutlined className="text-5xl text-red-500" />
           )
         }
         title={
@@ -187,7 +184,7 @@ const MovieCreate = () => {
                 <>
                   <Button
                     type="primary"
-                    className="bg-green-500 hover:bg-green-600 border-none"
+                    className="bg-green-500 border-none hover:bg-green-600"
                     onClick={handleModalClose}
                   >
                     Quay lại danh sách phim
@@ -209,7 +206,7 @@ const MovieCreate = () => {
                 <>
                   <Button
                     type="primary"
-                    className="bg-blue-500 hover:bg-blue-600 border-none"
+                    className="bg-blue-500 border-none hover:bg-blue-600"
                     onClick={() => setResultModalVisible(false)}
                   >
                     Tiếp tục chỉnh sửa
@@ -225,15 +222,15 @@ const MovieCreate = () => {
   );
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen px-4 py-8 text-white">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen px-4 py-8 text-white bg-gradient-to-br from-gray-900 to-blue-900">
+      <div className="mx-auto max-w-7xl">
         <div className="flex items-center mb-8">
           <Button
             icon={<ArrowLeftOutlined />}
             onClick={handleBack}
-            className="mr-4 bg-transparent text-white border-0 hover:bg-blue-800 rounded-full p-3 flex items-center justify-center"
+            className="flex items-center justify-center p-3 mr-4 text-white bg-transparent border-0 rounded-full hover:bg-blue-800"
           />
-          <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+          <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
             Create New Movie
           </h2>
         </div>
@@ -242,18 +239,18 @@ const MovieCreate = () => {
           <Alert
             message={
               <div className="flex items-center">
-                <span className="font-bold mr-2">Movie ID:</span>
-                <span className="font-mono bg-blue-900 px-2 py-1 rounded text-white">
+                <span className="mr-2 font-bold">Movie ID:</span>
+                <span className="px-2 py-1 font-mono text-white bg-blue-900 rounded">
                   {generatedId}
                 </span>
-                <span className="text-blue-300 ml-4 text-sm">
+                <span className="ml-4 text-sm text-blue-300">
                   (Auto-generated based on first genre)
                 </span>
               </div>
             }
             type="info"
             showIcon
-            className="mb-6 border border-blue-500 bg-blue-900 bg-opacity-30 rounded-lg"
+            className="mb-6 bg-blue-900 border border-blue-500 rounded-lg bg-opacity-30"
           />
         )}
 
@@ -273,7 +270,7 @@ const MovieCreate = () => {
                 </div>
               }
               key="basic"
-              className="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg mb-4"
+              className="mb-4 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg"
             >
               <Row gutter={24}>
                 <Col span={24} lg={12}>
@@ -284,7 +281,7 @@ const MovieCreate = () => {
                   >
                     <Input
                       placeholder="Movie title"
-                      className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500 focus:border-blue-500"
+                      className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                     />
                   </Form.Item>
 
@@ -300,7 +297,7 @@ const MovieCreate = () => {
                   >
                     <Input
                       placeholder="Original title"
-                      className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500 focus:border-blue-500"
+                      className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                     />
                   </Form.Item>
 
@@ -311,7 +308,7 @@ const MovieCreate = () => {
                     <TextArea
                       placeholder="Movie description"
                       rows={5}
-                      className="bg-gray-700 text-white border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
+                      className="text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                     />
                   </Form.Item>
                 </Col>
@@ -323,7 +320,7 @@ const MovieCreate = () => {
                   >
                     <Input
                       placeholder="YYYY-MM-DD"
-                      className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500 focus:border-blue-500"
+                      className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                     />
                   </Form.Item>
 
@@ -335,7 +332,7 @@ const MovieCreate = () => {
                   >
                     <Select
                       placeholder="Select language"
-                      className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500"
+                      className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500"
                       dropdownStyle={{
                         backgroundColor: "#1E293B",
                         color: "white",
@@ -365,7 +362,7 @@ const MovieCreate = () => {
                       <Select
                         mode="multiple"
                         placeholder="Select movie genres"
-                        className="w-full bg-gray-700 text-white border-gray-600 rounded-lg hover:border-blue-500"
+                        className="w-full text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500"
                         onChange={handleGenreChange}
                         tagRender={(props) => (
                           <Tag
@@ -405,7 +402,7 @@ const MovieCreate = () => {
                 </div>
               }
               key="media"
-              className="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg mb-4"
+              className="mb-4 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg"
             >
               <Row gutter={24}>
                 <Col span={24} lg={12}>
@@ -426,22 +423,22 @@ const MovieCreate = () => {
                             <img
                               src={posterPreview}
                               alt="Poster preview"
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                             />
                           ) : (
-                            <div className="text-center p-6">
-                              <UploadOutlined className="text-4xl text-gray-500 mb-3" />
+                            <div className="p-6 text-center">
+                              <UploadOutlined className="mb-3 text-4xl text-gray-500" />
                               <p className="text-gray-400">
                                 Upload or paste poster URL
                               </p>
-                              <p className="text-gray-500 text-sm mt-1">
+                              <p className="mt-1 text-sm text-gray-500">
                                 Recommended size: 500x750
                               </p>
                             </div>
                           )}
                         </div>
                         {posterPreview && (
-                          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100">
                             <Button
                               type="primary"
                               shape="round"
@@ -459,7 +456,7 @@ const MovieCreate = () => {
                       <Input
                         id="poster-upload"
                         placeholder="Enter poster URL (or paste /path for TMDB)"
-                        className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500 focus:border-blue-500"
+                        className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                         onChange={(e) => {
                           const value = e.target.value;
                           form.setFieldsValue({ poster_path: value });
@@ -496,22 +493,22 @@ const MovieCreate = () => {
                             <img
                               src={backdropPreview}
                               alt="Backdrop preview"
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                             />
                           ) : (
-                            <div className="text-center p-6">
-                              <UploadOutlined className="text-4xl text-gray-500 mb-3" />
+                            <div className="p-6 text-center">
+                              <UploadOutlined className="mb-3 text-4xl text-gray-500" />
                               <p className="text-gray-400">
                                 Upload or paste backdrop URL
                               </p>
-                              <p className="text-gray-500 text-sm mt-1">
+                              <p className="mt-1 text-sm text-gray-500">
                                 Recommended size: 1280x720
                               </p>
                             </div>
                           )}
                         </div>
                         {backdropPreview && (
-                          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100">
                             <Button
                               type="primary"
                               shape="round"
@@ -531,7 +528,7 @@ const MovieCreate = () => {
                       <Input
                         id="backdrop-upload"
                         placeholder="Enter backdrop URL (or paste /path for TMDB)"
-                        className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500 focus:border-blue-500"
+                        className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                         onChange={(e) => {
                           const value = e.target.value;
                           form.setFieldsValue({ backdrop_path: value });
@@ -562,7 +559,7 @@ const MovieCreate = () => {
                 </div>
               }
               key="ratings"
-              className="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg mb-4"
+              className="mb-4 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg"
             >
               <Row gutter={24}>
                 <Col span={24} md={8}>
@@ -574,7 +571,7 @@ const MovieCreate = () => {
                       placeholder="Enter popularity"
                       min={0}
                       step={0.1}
-                      className="w-full bg-gray-700 text-white border-gray-600 rounded-lg hover:border-blue-500 h-12"
+                      className="w-full h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500"
                     />
                   </Form.Item>
                 </Col>
@@ -589,7 +586,7 @@ const MovieCreate = () => {
                       min={0}
                       max={10}
                       step={0.001}
-                      className="w-full bg-gray-700 text-white border-gray-600 rounded-lg hover:border-blue-500 h-12"
+                      className="w-full h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500"
                     />
                   </Form.Item>
                 </Col>
@@ -602,7 +599,7 @@ const MovieCreate = () => {
                     <InputNumber
                       placeholder="Enter vote count"
                       min={0}
-                      className="w-full bg-gray-700 text-white border-gray-600 rounded-lg hover:border-blue-500 h-12"
+                      className="w-full h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500"
                     />
                   </Form.Item>
                 </Col>
@@ -619,7 +616,7 @@ const MovieCreate = () => {
                 </div>
               }
               key="settings"
-              className="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg mb-4"
+              className="mb-4 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg"
             >
               <Row gutter={24}>
                 <Col span={24} md={12}>
@@ -653,13 +650,13 @@ const MovieCreate = () => {
             </Panel>
           </Collapse>
 
-          <div className="mt-8 flex justify-between">
+          <div className="flex justify-between mt-8">
             <Button
               type="default"
               size="large"
               icon={<ArrowLeftOutlined />}
               onClick={handleBack}
-              className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 px-6 hover:bg-gray-600"
+              className="h-12 px-6 text-white bg-gray-700 border-gray-600 rounded-lg hover:bg-gray-600"
             >
               Back to List
             </Button>
@@ -669,7 +666,7 @@ const MovieCreate = () => {
               htmlType="submit"
               size="large"
               loading={submitting}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 border-0 rounded-lg h-12 px-8 hover:from-blue-600 hover:to-purple-700 shadow-lg"
+              className="h-12 px-8 border-0 rounded-lg shadow-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
               icon={<PlusOutlined />}
             >
               Create Movie
