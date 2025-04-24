@@ -102,13 +102,8 @@ const Header = (isLoggedIn, setIsLoggedIn) => {
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={() => {
-<<<<<<< HEAD
               setTimeout(() => setShowDropdown(false), 100);
             }}          
-=======
-              setTimeout(() => setShowDropdown(false), 100); // Delay tí cho Link hoạt động trước
-            }}
->>>>>>> ea2a3f452488772c759d9b363da32353462bc208
             placeholder="Tìm kiếm phim, diễn viên"
             className="flex-grow text-sm text-white bg-transparent outline-none placeholder:text-gray-400"
           />
