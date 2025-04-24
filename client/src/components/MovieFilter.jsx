@@ -7,7 +7,7 @@ const YEARS = ["2025", "2024"];
 const SORT_OPTIONS = [
   { label: "Mới nhất", value: "Mới nhất" },
   { label: "Cũ nhất", value: "Cũ nhất" },
-  { label: "A-Z", value: "A-Z" },
+  { label: "Tên A-Z", value: "Tên A-Z" },
   { label: "Tên Z-A", value: "Tên Z-A" }
 ];
 

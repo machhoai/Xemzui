@@ -8,13 +8,11 @@ const asyncHandler = require("express-async-handler");
 
 const getMovies = asyncHandler(async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;  // Default to page 1 if not provided
+    const page = parseInt(req.query.page) || 1; 
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
-
     // Lấy các query parameters từ request
     const { genres, years, sort,search } = req.query;
-
     // Khởi tạo filter rỗng
     const filter = {};
     if (search) {
@@ -26,7 +24,6 @@ const getMovies = asyncHandler(async (req, res) => {
       const genreArray = genres.split(',').map((g) => parseInt(g));
       filter.genre_ids = { $in: genreArray };
     }
-
     // Lọc theo năm phát hành
     if (years) {
       const yearArray = years.split(',');
@@ -35,7 +32,6 @@ const getMovies = asyncHandler(async (req, res) => {
         $lte: `${Math.max(...yearArray)}-12-31`,
       };
     }
-
     // Xử lý sắp xếp (sort)
     let sortOption = {};
     if (sort === "Mới nhất") {
@@ -47,18 +43,14 @@ const getMovies = asyncHandler(async (req, res) => {
     } else if (sort === "Tên Z-A") {
       sortOption.title = -1;
     }
-
     // Nếu không có filter, lấy toàn bộ phim
     const query = Object.keys(filter).length ? filter : {};
-
     const movies = await MoviesCollection.find(query)
       .sort(sortOption)
       .skip(skip)
       .limit(limit)
       .toArray();
-
     const total = await MoviesCollection.countDocuments(query);
-
     res.json({
       movies,
       total,

@@ -76,7 +76,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={() => {
-              setTimeout(() => setShowDropdown(false), 100); // Delay tí cho Link hoạt động trước
+              setTimeout(() => setShowDropdown(false), 100);
             }}          
             placeholder="Tìm kiếm phim, diễn viên"
             className="bg-transparent outline-none text-sm text-white flex-grow placeholder:text-gray-400"
@@ -89,7 +89,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
                   key={movie._id}
                   className="block px-4 py-2 hover:bg-gray-100 text-sm"
                   onClick={() => {
-                    setShowDropdown(false);
+                    // setShowDropdown(false);
                     setSearchTerm(''); 
                   }}
                 >
