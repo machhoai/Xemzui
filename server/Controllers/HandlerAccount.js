@@ -114,6 +114,7 @@ async function HandlerLogout(req, res) {
     // Thêm refresh token vào danh sách đen
     await addTokenToBlacklist(refreshToken, expiresAt);
 
+    console.log("Thêm refresh token vào danh sách đen thành công");
     // Xoá cookie refresh token và access token
     res
       .clearCookie("accessToken")

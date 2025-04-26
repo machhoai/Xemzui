@@ -58,8 +58,10 @@ const AppRouter = () => {
           return response.json();
         })
         .then((data) => {
+          console.log("Dữ liệu trả về từ API:", data);
           if (!data) {
             setisCheckingUser(false);
+            console.log("Không có dữ liệu trả về từ API");
             return;
           }
           setIsLoggedIn(true);
