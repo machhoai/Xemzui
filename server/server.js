@@ -58,12 +58,26 @@ app.put("/api/changepassword", authenticate, (req, res) => HandlerChangePassword
 app.post("/api/sendmailtoresetpass", (req, res) => HandlerSendResetPasswordLink(req, res));
 
 // API reset password
-app.post("/api/resetpassword", (req, res) =>HandlerResetPass(req, res));
+app.post("/api/resetpassword", (req, res) => HandlerResetPass(req, res));
 
 //** API Handler Data Movies ***/
 app.get('/api/get-movie-detail/:id', (req, res) => {
-    const movieId = req.params.id;
-    getMovieById(req, res, movieId)
+  const movieId = req.params.id;
+  getMovieById(req, res, movieId)
+})
+
+//API Get Movie
+app.get("/api/movies", (req, res) => {
+  const { genres, years, sort, search } = req.query;
+  getMovies(req, res, genres, years, sort, search)
+});
+
+//API Get Movie by id
+app.put("/api/movies/:id", authenticateAdmin, (req, res) => updateMovie(req, res));
+
+//API Get Genres
+app.get("/api/getGenres", (req, res) => {
+  getGenresList(req, res)
 })
 
 //------------- API Admin -----------------
@@ -79,21 +93,6 @@ app.delete("/api/movies/:id", authenticateAdmin, (req, res) =>
 app.delete("/api/movies", authenticateAdmin, (req, res) =>
   deleteAllMovie(req, res)
 );
-
-app.put("/api/movies/:id", authenticateAdmin, (req, res) => updateMovie(req, res));
-
-app.get('/api/movie', (req, res) => {
-  getMovies(req, res)
-})
-
-app.get("/api/movies", (req, res) => {
-  const { genres, years, sort,search } = req.query;
- getMovies(req, res, genres, years, sort, search)
-});
-
-app.get("/api/getGenres", (req, res) => {
-  getGenresList(req, res)
-})
 
 const PORT = process.env.PORT || 8000;
 

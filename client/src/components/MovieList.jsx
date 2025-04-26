@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MovieCard from "./MovieCard";
-import { fetchGetGenres } from "../services/MoviesApi";
+import { fetchGetGenres, fetchMovies } from "../services/movieService"; // Import fetchMovies
 import { useLoading } from "../contexts/LoadingContext";
 import Pagination from "./Pagination";
 
@@ -14,83 +14,86 @@ export default function MovieList({
   const [error, setError] = useState(null);
   const { setLoading } = useLoading();
   const [genreMap, setGenreMap] = useState({});
-  const [totalPages, setTotalPages] = useState(1); // Thêm state totalPages
-  const [totalMovies, setTotalMovies] = useState(0); // Thêm state totalMovies
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalMovies, setTotalMovies] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 20;
+
   useEffect(() => {
     const fetchGenresAndMovies = async () => {
       setLoading(true);
       try {
-        const genreList = await fetchGetGenres(); // Fetch danh sách thể loại
+        const genreList = await fetchGetGenres();
         const map = genreList.reduce((acc, genre) => {
-          acc[genre.id] = genre.name; // Tạo GENRE_MAP từ genreList
+          acc[genre.id] = genre.name;
           return acc;
         }, {});
-        setGenreMap(map); // Set GENRE_MAP vào state
-        await fetchMovies(map); // Gọi fetchMovies với genreMap mới
-        setLoading(false);
+        setGenreMap(map);
+        
+        // Call the external fetchMovies function and handle its response
+        const data = await fetchMovies(
+          map,
+          1, // Reset to first page when filters change
+          ITEMS_PER_PAGE,
+          searchTerm,
+          selectedGenres,
+          selectedYears,
+          sort
+        );
+        
+        // Process the response data
+        handleMoviesResponse(data, map);
+        setCurrentPage(1); // Reset current page when filters change
       } catch (err) {
         console.error(err);
         setError("Không thể load thể loại/phim");
       } finally {
+        setLoading(false);
+        console.log("Đã hoàn thành việc lấy thể loại và phim");
       }
     };
 
-    fetchGenresAndMovies(); // Gọi lại hàm khi các dependency thay đổi
-  }, [searchTerm, selectedGenres, selectedYears, sort]); // Các dependency cần theo dõi
+    fetchGenresAndMovies();
+  }, [searchTerm, selectedGenres, selectedYears, sort]);
 
-  const fetchMovies = async (genreMap, page = 1, limit = 20) => {
-    const filters = {
-      genres: selectedGenres.join(","),
-      years: selectedYears.join(","),
-      sort,
-    };
+  // Function to handle the response from fetchMovies
+  const handleMoviesResponse = (data, genreMapData) => {
+    if (data.totalPages >= 0) {
+      setTotalPages(data.totalPages);
+    }
+    if (data.movies) {
+      setTotalMovies(data.total);
+      const moviesWithGenres = data.movies.map((movie) => ({
+        ...movie,
+        genres: movie.genre_ids?.map((id) => genreMapData[id]).filter(Boolean),
+      }));
+      setMovies(moviesWithGenres);
+    } else {
+      console.error("API không trả về movies");
+    }
+  };
 
+  const handlePageChange = async (page) => {
+    console.log("Đang chuyển trang:", page);
+    setLoading(true);
     try {
-      const response = await fetch(
-        `https://xemzui-production.up.railway.app/api/movies?search=${encodeURIComponent(
-          searchTerm
-        )}&genres=${filters.genres}&years=${filters.years}&sort=${
-          filters.sort
-        }&page=${page}&limit=${limit}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }
+      const data = await fetchMovies(
+        genreMap,
+        page,
+        ITEMS_PER_PAGE,
+        searchTerm,
+        selectedGenres,
+        selectedYears,
+        sort
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch movies");
-      }
-
-      const data = await response.json();
-
-      if (data.totalPages >= 0) {
-        setTotalPages(data.totalPages); // Cập nhật tổng số trang
-      }
-      if (data.movies) {
-        setTotalMovies(data.total); // Cập nhật tổng số phim
-        const moviesWithGenres = data.movies.map((movie) => ({
-          ...movie,
-          genres: movie.genre_ids?.map((id) => genreMap[id]).filter(Boolean),
-        }));
-        setMovies(moviesWithGenres);
-      } else {
-        console.error("API không trả về movies");
-      }
+      handleMoviesResponse(data, genreMap);
+      setCurrentPage(page);
     } catch (error) {
       setError(error.message);
       console.error("Failed to fetch movies:", error);
     } finally {
-      setLoading(false); // Chỉ gọi setLoading ở đây
+      setLoading(false);
     }
-  };
-
-  const handlePageChange = (page) => {
-    console.log("Đang chuyển trang:", page);
-    const limit = 20; // Số lượng phim trên mỗi trang
-    setLoading(true); // Bắt đầu loading khi chuyển trang
-    fetchMovies(genreMap, page, limit); // Gọi lại hàm fetchMovies với trang mới
   };
 
   if (error) {
@@ -107,22 +110,17 @@ export default function MovieList({
       {movies.length > 0 && (
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 ">
-            {movies.length === 0 ? (
-              <div className="text-center text-gray-500 col-span-full">
-                Không có phim nào
+            {movies.map((movie) => (
+              <div key={movie._id} className="w-full">
+                <MovieCard movie={movie} />
               </div>
-            ) : (
-              movies.map((movie) => (
-                <div key={movie._id} className="w-full">
-                  <MovieCard movie={movie} />
-                </div>
-              ))
-            )}
+            ))}
           </div>
           {totalPages > 1 && (
             <Pagination
               handlePageChange={handlePageChange}
               pages={totalPages}
+              currentPage={currentPage}
             />
           )}
           <p className="mt-2 text-white">

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import MovieList from './MovieList';
-import { fetchGetGenres } from '../services/MoviesApi';
+import { fetchGetGenres } from '../services/movieService';
 import { useSearchParams } from 'react-router-dom';
 
 const YEARS = ["2025", "2024"];
 const SORT_OPTIONS = [
   { label: "Mới nhất", value: "Mới nhất" },
   { label: "Cũ nhất", value: "Cũ nhất" },
-  { label: "A-Z", value: "A-Z" },
+  { label: "Tên A-Z", value: "Tên A-Z" },
   { label: "Tên Z-A", value: "Tên Z-A" }
 ];
 
@@ -110,7 +110,7 @@ const MovieFilter = () => {
 function FilterGroup({ title, children }) {
   return (
     <div>
-      <h4 className="text-gray-800 dark:text-gray-200 font-medium mb-1">{title}</h4>
+      <h4 className="mb-1 font-medium text-gray-800 dark:text-gray-200">{title}</h4>
       <div className="flex flex-wrap gap-1.5">{children}</div>
     </div>
   );

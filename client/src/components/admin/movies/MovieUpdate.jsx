@@ -30,7 +30,7 @@ import {
     CloseCircleOutlined,
 } from "@ant-design/icons";
 import { updateMovie, fetchMovieById } from "../../../services/movieService";
-import { fetchGetGenres } from "../../../services/MoviesApi";
+import { fetchGetGenres } from "../../../services/movieService";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -189,7 +189,7 @@ const MovieUpdate = () => {
             console.log("Submitting movie data:", movieToUpdate); // Log the movie data being submitted
 
 
-            const response = await updateMovie(id, movieToUpdate);
+            await updateMovie(id, movieToUpdate);
 
             // Show success message
             setResultStatus("success");
@@ -241,9 +241,9 @@ const MovieUpdate = () => {
                 status={resultStatus}
                 icon={
                     resultStatus === "success" ? (
-                        <CheckCircleOutlined className="text-green-500 text-5xl" />
+                        <CheckCircleOutlined className="text-5xl text-green-500" />
                     ) : (
-                        <CloseCircleOutlined className="text-red-500 text-5xl" />
+                        <CloseCircleOutlined className="text-5xl text-red-500" />
                     )
                 }
                 title={
@@ -273,7 +273,7 @@ const MovieUpdate = () => {
                                 <>
                                     <Button
                                         type="primary"
-                                        className="bg-green-500 hover:bg-green-600 border-none"
+                                        className="bg-green-500 border-none hover:bg-green-600"
                                         onClick={handleModalClose}
                                     >
                                         Quay lại danh sách phim
@@ -283,7 +283,7 @@ const MovieUpdate = () => {
                                 <>
                                     <Button
                                         type="primary"
-                                        className="bg-blue-500 hover:bg-blue-600 border-none"
+                                        className="bg-blue-500 border-none hover:bg-blue-600"
                                         onClick={() => setResultModalVisible(false)}
                                     >
                                         Tiếp tục chỉnh sửa
@@ -300,22 +300,22 @@ const MovieUpdate = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-blue-900">
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-blue-900">
                 <Spin size="large" tip="Loading movie data..." />
             </div>
         );
     }
 
     return (
-        <div className="bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen px-4 py-8 text-white">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen px-4 py-8 text-white bg-gradient-to-br from-gray-900 to-blue-900">
+            <div className="mx-auto max-w-7xl">
                 <div className="flex items-center mb-8">
                     <Button
                         icon={<ArrowLeftOutlined />}
                         onClick={handleBack}
-                        className="mr-4 bg-transparent text-white border-0 hover:bg-blue-800 rounded-full p-3 flex items-center justify-center"
+                        className="flex items-center justify-center p-3 mr-4 text-white bg-transparent border-0 rounded-full hover:bg-blue-800"
                     />
-                    <p className="text-3xl font-bold bg-clip-text text-center flex items-center m-0 text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                    <p className="flex items-center m-0 text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
                         Update Movie
                     </p>
                 </div>
@@ -323,15 +323,15 @@ const MovieUpdate = () => {
                 <Alert
                     message={
                         <div className="flex items-center">
-                            <span className="font-bold mr-2">Movie ID:</span>
-                            <span className="font-mono bg-blue-900 px-2 py-1 rounded text-white">
+                            <span className="mr-2 font-bold">Movie ID:</span>
+                            <span className="px-2 py-1 font-mono text-white bg-blue-900 rounded">
                                 {id}
                             </span>
                         </div>
                     }
                     type="info"
                     showIcon
-                    className="mb-6 border border-blue-500 bg-blue-900 bg-opacity-30 rounded-lg"
+                    className="mb-6 bg-blue-900 border border-blue-500 rounded-lg bg-opacity-30"
                 />
 
                 <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -350,7 +350,7 @@ const MovieUpdate = () => {
                                 </div>
                             }
                             key="basic"
-                            className="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg mb-4"
+                            className="mb-4 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg"
                         >
                             <Row gutter={24}>
                                 <Col span={24} lg={12}>
@@ -364,7 +364,7 @@ const MovieUpdate = () => {
                                             value={movie.title}
                                             onChange={handleInputChange}
                                             placeholder="Movie title"
-                                            className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500 focus:border-blue-500"
+                                            className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                                         />
                                     </Form.Item>
 
@@ -383,7 +383,7 @@ const MovieUpdate = () => {
                                             value={movie.original_title}
                                             onChange={handleInputChange}
                                             placeholder="Original title"
-                                            className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500 focus:border-blue-500"
+                                            className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                                         />
                                     </Form.Item>
 
@@ -397,7 +397,7 @@ const MovieUpdate = () => {
                                             onChange={handleInputChange}
                                             placeholder="Movie description"
                                             rows={5}
-                                            className="bg-gray-700 text-white border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
+                                            className="text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                                         />
                                     </Form.Item>
                                 </Col>
@@ -412,7 +412,7 @@ const MovieUpdate = () => {
                                             value={movie.release_date}
                                             onChange={(e) => handleDateChange(e.target.value)}
                                             placeholder="YYYY-MM-DD"
-                                            className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500 focus:border-blue-500"
+                                            className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                                         />
                                     </Form.Item>
 
@@ -426,7 +426,7 @@ const MovieUpdate = () => {
                                             value={movie.original_language}
                                             onChange={(value) => handleInputChange({ target: { name: "original_language", value } })}
                                             placeholder="Select language"
-                                            className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500"
+                                            className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500"
                                             dropdownStyle={{
                                                 backgroundColor: "#1E293B",
                                                 color: "white",
@@ -457,7 +457,7 @@ const MovieUpdate = () => {
                                                 mode="multiple"
                                                 value={selectedGenres}
                                                 placeholder="Select movie genres"
-                                                className="w-full bg-gray-700 text-white border-gray-600 rounded-lg hover:border-blue-500"
+                                                className="w-full text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500"
                                                 onChange={handleGenreChange}
                                                 tagRender={(props) => (
                                                     <Tag
@@ -498,7 +498,7 @@ const MovieUpdate = () => {
                                 </div>
                             }
                             key="media"
-                            className="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg mb-4"
+                            className="mb-4 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg"
                         >
                             <Row gutter={24}>
                                 <Col span={24} lg={12}>
@@ -518,22 +518,22 @@ const MovieUpdate = () => {
                                                         <img
                                                             src={posterPreview}
                                                             alt="Poster preview"
-                                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                                                         />
                                                     ) : (
-                                                        <div className="text-center p-6">
-                                                            <UploadOutlined className="text-4xl text-gray-500 mb-3" />
+                                                        <div className="p-6 text-center">
+                                                            <UploadOutlined className="mb-3 text-4xl text-gray-500" />
                                                             <p className="text-gray-400">
                                                                 Upload or paste poster URL
                                                             </p>
-                                                            <p className="text-gray-500 text-sm mt-1">
+                                                            <p className="mt-1 text-sm text-gray-500">
                                                                 Recommended size: 500x750
                                                             </p>
                                                         </div>
                                                     )}
                                                 </div>
                                                 {posterPreview && (
-                                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100">
                                                         <Button
                                                             type="primary"
                                                             shape="round"
@@ -552,7 +552,7 @@ const MovieUpdate = () => {
                                                 value={movie.poster_path}
                                                 onChange={(e) => handleImageChange('poster', e.target.value)}
                                                 placeholder="Enter poster URL (or paste /path for TMDB)"
-                                                className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500 focus:border-blue-500"
+                                                className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                                             />
                                         </div>
                                     </Form.Item>
@@ -575,22 +575,22 @@ const MovieUpdate = () => {
                                                         <img
                                                             src={backdropPreview}
                                                             alt="Backdrop preview"
-                                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                                                         />
                                                     ) : (
-                                                        <div className="text-center p-6">
-                                                            <UploadOutlined className="text-4xl text-gray-500 mb-3" />
+                                                        <div className="p-6 text-center">
+                                                            <UploadOutlined className="mb-3 text-4xl text-gray-500" />
                                                             <p className="text-gray-400">
                                                                 Upload or paste backdrop URL
                                                             </p>
-                                                            <p className="text-gray-500 text-sm mt-1">
+                                                            <p className="mt-1 text-sm text-gray-500">
                                                                 Recommended size: 1280x720
                                                             </p>
                                                         </div>
                                                     )}
                                                 </div>
                                                 {backdropPreview && (
-                                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100">
                                                         <Button
                                                             type="primary"
                                                             shape="round"
@@ -612,7 +612,7 @@ const MovieUpdate = () => {
                                                 onChange={(e) => handleImageChange('backdrop', e.target.value)}
 
                                                 placeholder="Enter backdrop URL (or paste /path for TMDB)"
-                                                className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 hover:border-blue-500 focus:border-blue-500"
+                                                className="h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500 focus:border-blue-500"
                                             />
                                         </div>
                                     </Form.Item>
@@ -631,7 +631,7 @@ const MovieUpdate = () => {
                                 </div>
                             }
                             key="ratings"
-                            className="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg mb-4"
+                            className="mb-4 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg"
                         >
                             <Row gutter={24}>
                                 <Col span={24} md={8}>
@@ -645,7 +645,7 @@ const MovieUpdate = () => {
                                             placeholder="Enter popularity"
                                             min={0}
                                             step={0.1}
-                                            className="w-full bg-gray-700 text-white border-gray-600 rounded-lg hover:border-blue-500 h-12"
+                                            className="w-full h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500"
                                         />
                                     </Form.Item>
                                 </Col>
@@ -662,7 +662,7 @@ const MovieUpdate = () => {
                                             min={0}
                                             max={10}
                                             step={0.001}
-                                            className="w-full bg-gray-700 text-white border-gray-600 rounded-lg hover:border-blue-500 h-12"
+                                            className="w-full h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500"
                                         />
                                     </Form.Item>
                                 </Col>
@@ -677,7 +677,7 @@ const MovieUpdate = () => {
                                             onChange={(value) => handleNumberChange('vote_count', value)}
                                             placeholder="Enter vote count"
                                             min={0}
-                                            className="w-full bg-gray-700 text-white border-gray-600 rounded-lg hover:border-blue-500 h-12"
+                                            className="w-full h-12 text-white bg-gray-700 border-gray-600 rounded-lg hover:border-blue-500"
                                         />
                                     </Form.Item>
                                 </Col>
@@ -695,7 +695,7 @@ const MovieUpdate = () => {
                                 </div>
                             }
                             key="settings"
-                            className="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg mb-4"
+                            className="mb-4 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg"
                         >
                             <Row gutter={24}>
                                 <Col span={24} md={12}>
@@ -733,13 +733,13 @@ const MovieUpdate = () => {
                         </Panel>
                     </Collapse>
 
-                    <div className="mt-8 flex justify-between">
+                    <div className="flex justify-between mt-8">
                         <Button
                             type="default"
                             size="large"
                             icon={<ArrowLeftOutlined />}
                             onClick={handleBack}
-                            className="bg-gray-700 text-white border-gray-600 rounded-lg h-12 px-6 hover:bg-gray-600"
+                            className="h-12 px-6 text-white bg-gray-700 border-gray-600 rounded-lg hover:bg-gray-600"
                         >
                             Back to List
                         </Button>
@@ -749,7 +749,7 @@ const MovieUpdate = () => {
                             htmlType="submit"
                             size="large"
                             loading={submitting}
-                            className="bg-gradient-to-r from-blue-500 to-purple-600 border-0 rounded-lg h-12 px-8 hover:from-blue-600 hover:to-purple-700 shadow-lg"
+                            className="h-12 px-8 border-0 rounded-lg shadow-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
                             icon={<EditOutlined />}
                         >
                             Update Movie

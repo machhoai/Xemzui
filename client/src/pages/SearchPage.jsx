@@ -9,8 +9,7 @@ const SearchPage = () => {
   const [sort, setSort] = useState('');
   const [showFilter, setShowFilter] = useState(false); // state để điều khiển hiển thị MovieFilter
 
-  // Toggle visibility of MovieFilter
-  const toggleFilter = () => setShowFilter((prev) => !prev);
+
 
   return (
     <div id="wrapper" className="pt-20 px-4 md:px-8">

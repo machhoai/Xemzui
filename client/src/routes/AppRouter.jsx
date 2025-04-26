@@ -11,6 +11,7 @@ import SignupPage from "../pages/SignUp";
 import ForgotPassword from "../pages/ForgotPass";
 import Navbar from "../components/Navbar";
 import { refreshAccessToken } from "../services/RefreshAccessTokenAPI";
+import { HandleGetUser } from "../services/HandlerUserService";
 import Home from "../pages/Home";
 import DashboardMovieAdmin from "../pages/admin/movies/DashboardMovieAdmin";
 import { motion } from "motion/react";
@@ -25,7 +26,6 @@ import { OrbitProgress } from "react-loading-indicators";
 import { useLoading } from "../contexts/LoadingContext";
 import Sidebar from "../components/admin/layout/Sidebar";
 import DashboardAdmin from "../pages/admin/movies/DashboardAdmin";
-const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 import MovieUpdate from "../components/admin/movies/MovieUpdate";
 
 const AppRouter = () => {
@@ -39,42 +39,34 @@ const AppRouter = () => {
   //kiểm tra phiên đăng nhập
   useEffect(() => {
     const checkLoginStatus = async () => {
-      fetch(`${BASE_URL}/api/user`, {
-        method: "GET",
-        credentials: "include",
-      })
-        .then(async (response) => {
-          if (response.status === 401) {
-            //access token hết hạn
+      try {
+        const userData = await HandleGetUser();
+
+        if (userData) {
+          setIsLoggedIn(true);
+          if (userData.isAdmin) {
+            console.log("isAdmin:", userData.isAdmin);
+            setIsAdmin(true);
+          }
+        }
+      } catch (error) {
+        // Nếu có lỗi 401 (Unauthorized), thử refresh token
+        if (error.message.includes("401")) {
+          try {
             await refreshAccessToken(() => {
               checkLoginStatus();
             }, setIsLoggedIn);
-            return;
-          } else if (!response.ok) {
-            const message = await response.json();
-            window.alert(message.message);
-            return;
+          } catch (refreshError) {
+            console.error("Lỗi khi refresh token:", refreshError);
           }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Dữ liệu trả về từ API:", data);
-          if (!data) {
-            setisCheckingUser(false);
-            console.log("Không có dữ liệu trả về từ API");
-            return;
-          }
-          setIsLoggedIn(true);
-          if (data.isAdmin) {
-            console.log("isAdmin:", data.isAdmin);
-            setIsAdmin(true);
-          }
-          setisCheckingUser(false);
-        })
-        .catch((error) => {
+        } else {
           console.error("Lỗi khi lấy thông tin user:", error);
-        });
+        }
+      } finally {
+        setisCheckingUser(false);
+      }
     };
+
     checkLoginStatus();
   }, []);
 
@@ -82,7 +74,7 @@ const AppRouter = () => {
     console.log("isLoading đã đổi:", isLoggedIn);
   }, [isLoggedIn]);
 
-  if(isCheckingUser) {
+  if (isCheckingUser) {
     return (
       <motion.div
         initial={{ opacity: 1, display: "block", zIndex: 1000000 }}
@@ -96,7 +88,7 @@ const AppRouter = () => {
           duration: 0.8,
           ease: "easeInOut",
         }}
-        className="fixed overflow-hidden inset-0 w-screen h-screen"
+        className="fixed inset-0 w-screen h-screen overflow-hidden"
       >
         <motion.div
           initial={{ opacity: 0 }}
@@ -106,7 +98,7 @@ const AppRouter = () => {
             duration: 0.5,
             ease: "easeInOut",
           }}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-40 z-1000000 "
+          className="absolute transform -translate-x-1/2 translate-y-40 top-1/2 left-1/2 z-1000000 "
         >
           <OrbitProgress color="#8391a7" size="small" text="" textColor="" />
         </motion.div>
@@ -117,35 +109,36 @@ const AppRouter = () => {
 
   return (
     <>
-      {!isAdmin && <motion.div
-        initial={{ opacity: 1, display: "block", zIndex: 1000000 }}
-        animate={
-          !isLoading
-            ? { opacity: 0, display: "none", zIndex: 1000000 }
-            : { opacity: 1, display: "block", zIndex: 1000000 }
-        }
-        transition={{
-          delay: 2,
-          duration: 0.8,
-          ease: "easeInOut",
-        }}
-        className="fixed overflow-hidden inset-0 w-screen h-screen"
-      >
+      {!isAdmin && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 1, display: "block", zIndex: 1000000 }}
+          animate={
+            !isLoading
+              ? { opacity: 0, display: "none", zIndex: 1000000 }
+              : { opacity: 1, display: "block", zIndex: 1000000 }
+          }
           transition={{
-            delay: 4,
-            duration: 0.5,
+            delay: 2,
+            duration: 0.8,
             ease: "easeInOut",
           }}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-40 z-1000000 "
+          className="fixed inset-0 w-screen h-screen overflow-hidden"
         >
-          <OrbitProgress color="#8391a7" size="small" text="" textColor="" />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+              delay: 4,
+              duration: 0.5,
+              ease: "easeInOut",
+            }}
+            className="absolute transform -translate-x-1/2 translate-y-40 top-1/2 left-1/2 z-1000000 "
+          >
+            <OrbitProgress color="#8391a7" size="small" text="" textColor="" />
+          </motion.div>
+          <WelcomeLoad />
         </motion.div>
-        <WelcomeLoad />
-      </motion.div>}
-      
+      )}
 
       {isAdminRoute ? (
         isAdmin && <Sidebar setIsLoggedIn={setIsLoggedIn} /> //navbar admin

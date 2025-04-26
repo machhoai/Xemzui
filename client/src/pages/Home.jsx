@@ -1,6 +1,4 @@
 import React from "react";
-import MovieList from "../components/MovieList";
-import MovieFliter from "../components/MovieFilter";
 import MovieFilter from "../components/MovieFilter";
 
 export default function Home() {
